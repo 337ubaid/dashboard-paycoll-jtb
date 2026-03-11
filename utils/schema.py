@@ -47,12 +47,12 @@ BATAS_KUADRAN = {
     },
 
     "DPS": {
-        "lama_tunggakan": 6,
+        "lama_tunggakan": 6, # 3
         "saldo_akhir": 10_000_000
     },
 
     "DSS": {
-        "lama_tunggakan": 6,
-        "saldo_akhir": 50_000_000
+        "lama_tunggakan": 6, # 3
+        "saldo_akhir": 50_000_000 # 10_000_000
     }
 }
