@@ -4,7 +4,8 @@ from modules.transform import add_metadata, compute_lama_tunggakan, assign_kuadr
 from modules.excel_reader import read_excel_mybrains
 from modules.cleaner import clean_header
 from utils.schema import REQUIRED_COLUMNS_MYBRAINS
-from utils.selector import pilih_kategori
+from utils.selector import pilih_segmen
+from modules.sheets_client import upload_data_to_sheet
 
 # ====== Konfigurasi PAge ======
 st.set_page_config(
@@ -20,26 +21,68 @@ sidebar()
 # 5. update data ke database
 # 6. konfirmasi kirim
 
-bulan_target, tahun_target, segmen_target = pilih_kategori()
-bill_periode = f"{tahun_target}{bulan_target:02d}"
+col1, col2 = st.columns(2)
 
-file = st.file_uploader("Upload file", type=["xls"])
-if file:
+with col2:
+    segmen_target = pilih_segmen()
+    bill_periode = st.date_input("Bill Periode", value="today")
+    bill_periode = bill_periode.strftime("%d/%m/%Y")
 
-    try:
-        df = read_excel_mybrains(file)
-        df = clean_header(df)
-        df = df[REQUIRED_COLUMNS_MYBRAINS].copy()
-        
-        # tambahkan kolom pendukung(segmen, billper, kuadran)
-        df = add_metadata(df, segmen_target, bill_periode)
-        df = compute_lama_tunggakan(df)
-        df = assign_kuadran(df)
-        st.dataframe(df)
+with col1:
+    file = st.file_uploader("Upload file", type=["xls"])
+    if file:
 
-        # if st.button("Upload ke database"):
-            # upload_to_sheet(df)
-            # st.success("Data berhasil diupload")
+        try:
+            df = read_excel_mybrains(file)
+            df = clean_header(df)
+            df = df[REQUIRED_COLUMNS_MYBRAINS].copy()
+            
+            # tambahkan kolom pendukung(segmen, billper, kuadran)
+            df = add_metadata(df, segmen_target, bill_periode)
+            df = compute_lama_tunggakan(df)
+            df = assign_kuadran(df)
+            st.dataframe(df)
 
-    except Exception as e:
-        st.error(str(e))
+            # if st.button("Upload ke database"):
+                # upload_to_sheet(df)
+                # st.success("Data berhasil diupload")
+
+        except Exception as e:
+            st.error(str(e))
+
+
+if st.button("Upload ke Database", type="primary"):
+
+    upload_data_to_sheet(df)
+
+    st.success("Data berhasil diupload")
+
+# from streamlit_extras.stylable_container import stylable_container
+
+# # Create buttons with st.button
+# with stylable_container(
+#     "green",
+#     css_styles="""
+#     button {
+#         background-color: #00FF00;
+#         color: black;
+#     }""",
+# ):
+#     button1_clicked = st.button("Button 1", key="button1")
+# with stylable_container(
+#     "red",
+#     css_styles="""
+#     button {
+#         background-color: #FF0000;
+
+#     }""",
+# ):
+#     button2_clicked = st.button("Button 2", key="button2")
+
+# # Check button states and print messages
+# if st.button("Submit"):
+#     if button1_clicked:
+#         st.write("Button 1 pressed")
+#     elif button2_clicked:
+#         st.write("Button 2 pressed")
+

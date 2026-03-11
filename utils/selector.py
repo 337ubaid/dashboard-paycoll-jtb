@@ -2,6 +2,14 @@ import streamlit as st
 from datetime import datetime
 from utils.schema import BULAN, SEGMEN
 
+def pilih_segmen() :
+    # Pilihan segmen
+    segmen_target = st.selectbox(
+        "Pilih Segmen",
+        SEGMEN
+    )
+    return segmen_target
+
 def pilih_kategori():
     """
     Komponen UI untuk memilih Segmen, Bulan, dan Tahun.
@@ -19,23 +27,23 @@ def pilih_kategori():
         - `tahun_target` : tahun dalam format integer (mis. 2025)
         - `segmen_target`: string segmen yang dipilih
     """
-    col1, col2, col3 = st.columns(3)
+    # col1, col2, col3 = st.columns(3)
 
     # Pilihan segmen
-    segmen_target = col1.selectbox(
+    segmen_target = st.selectbox(
         "Pilih Segmen",
         SEGMEN
     )
 
     # Pilihan bulan
-    bulan_target = col2.selectbox(
+    bulan_target = st.selectbox(
         "Pilih Bulan",
         list(BULAN.keys()),
         format_func=lambda x: BULAN[x]
     )
         # Pilihan tahun (hanya tahun sekarang & tahun sebelumnya)
     tahun_sekarang = datetime.now().year
-    tahun_target = col3.selectbox(
+    tahun_target = st.selectbox(
         "Pilih Tahun",
         [tahun_sekarang, tahun_sekarang - 1]
     )
