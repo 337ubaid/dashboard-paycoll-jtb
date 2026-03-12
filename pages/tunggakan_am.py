@@ -8,6 +8,7 @@ import pandas as pd
 from utils.validator import format_currency,print_dataframe, format_skala_rupiah
 from datetime import date
 
+TODAY = date.today()
 
 # ====== Konfigurasi PAge ======
 st.set_page_config(
@@ -16,6 +17,7 @@ st.title("❇️ Tunggakan AM")
 sidebar()
 
 df_database = load_database()
+df_database = filter_data(df_database,"-Semua-", tanggal=TODAY)
 
 nama_am = st.text_input("Nama AM", "")
 if nama_am:
