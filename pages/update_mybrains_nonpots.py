@@ -37,7 +37,7 @@ with col1:
             df = clean_header(df)
             df = df[REQUIRED_COLUMNS_MYBRAINS].copy()
             
-            # tambahkan kolom pendukung(segmen, billper, kuadran)
+            # tambahkan kolom pendukung(segmen, tanggal, kuadran)
             df = add_metadata(df, segmen_target, bill_periode)
             df = compute_lama_tunggakan(df)
             df = assign_kuadran(df)

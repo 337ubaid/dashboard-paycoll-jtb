@@ -19,8 +19,8 @@ from modules.metrics import compute_metrics
 
 segmen_target = pilih_segmen()
 
-df_database["billper"] = pd.to_datetime(
-    df_database["billper"],
+df_database["tanggal"] = pd.to_datetime(
+    df_database["tanggal"],
     format="%d/%m/%Y"
 ).dt.date
 

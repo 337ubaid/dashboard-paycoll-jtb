@@ -15,7 +15,7 @@ def filter_data(df, segmen):
 
 def get_value_by_date(df, target_date):
 
-    df_day = df[df["billper"] == target_date]
+    df_day = df[df["tanggal"] == target_date]
 
     if df_day.empty:
         return 0

@@ -3,12 +3,12 @@ import streamlit as st
 from utils.schema import AGING_RULE
 from utils.schema import BATAS_KUADRAN
 
-def add_metadata(df, segmen, billper):
+def add_metadata(df, segmen, tanggal):
 
     df = df.copy()
 
     df["segmen"] = segmen
-    df["billper"] = billper
+    df["tanggal"] = tanggal
 
     return df
 
