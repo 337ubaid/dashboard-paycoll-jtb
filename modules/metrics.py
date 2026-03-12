@@ -23,7 +23,7 @@ def filter_data(df, segmen, kuadran=None, tanggal=None):
     return df
 
 
-def get_value_by_date(df, target_date):
+def get_saldo_by_date(df, target_date):
 
     df_day = df[df["tanggal"] == target_date]
 
@@ -32,20 +32,35 @@ def get_value_by_date(df, target_date):
 
     return df_day["saldo_akhir"].sum()
 
+def get_total_pelanggan_by_date(df, target_date):
+    
+    df_day = df[df["tanggal"] == target_date]
+
+    return len(df_day)
+
+
 
 def compute_metrics(df, segmen):
 
     df = filter_data(df, segmen)
     
-    val_today = get_value_by_date(df, today)
-    val_yesterday = get_value_by_date(df, yesterday)
-    val_day6 = get_value_by_date(df, day6)
+    val_today = get_saldo_by_date(df, today)
+    val_yesterday = get_saldo_by_date(df, yesterday)
+    val_day6 = get_saldo_by_date(df, day6)
     
-    # st.write(val_today)
+    pelanggan_today = get_total_pelanggan_by_date(df, today)
+    pelanggan_yesterday = get_total_pelanggan_by_date(df, yesterday)
+    pelanggan_day6 = get_total_pelanggan_by_date(df, day6)
 
     return df, {
         "today": val_today,
         "delta_yesterday": val_today - val_yesterday,
         "delta_day6": val_today - val_day6,
         "day6": val_day6
+    },{
+        "today": pelanggan_today,
+        "delta_yesterday": pelanggan_today - pelanggan_yesterday,
+        "delta_day6": pelanggan_today - pelanggan_day6,
+        "day6": pelanggan_day6
+        
     }
