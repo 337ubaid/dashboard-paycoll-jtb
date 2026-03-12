@@ -52,8 +52,9 @@ def render_kuadran(kuadran):
     with c2:
         st.write(f"Total Saldo : {total_saldo_kuadran} ({persen_saldo_kuadran:.2f}%)")
 
-    # print_dataframe(df_display.head(3))
-    st.dataframe(format_currency(df_display))
+    print_dataframe(df_display.head(3))
+    #
+    # st.dataframe(format_currency(df_display))
     
 
 c1, c2 = st.columns(2)

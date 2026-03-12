@@ -57,3 +57,13 @@ def upload_data_to_sheet(df):
         rows,
         value_input_option="USER_ENTERED"
     )
+
+# def update_batas(df):
+
+#     ws = client.open(SPREADSHEET_NAME).worksheet("BATAS_KUADRAN")
+
+#     ws.clear()
+
+#     data = [df.columns.tolist()] + df.values.tolist()
+
+#     ws.update("A1", data)
