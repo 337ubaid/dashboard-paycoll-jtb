@@ -6,6 +6,7 @@ from modules.metrics import filter_data
 import streamlit as st
 import pandas as pd
 from utils.validator import format_currency,print_dataframe, format_skala_rupiah
+from modules.metrics import show_metrics
 from datetime import date
 
 TODAY = date.today()
@@ -17,7 +18,7 @@ st.title("❇️ Tunggakan AM")
 sidebar()
 
 df_database = load_database()
-df_database = filter_data(df_database,"-Semua-", tanggal=TODAY)
+df_database = filter_data(df_database,"-Semua-")
 
 nama_am = st.text_input("Nama AM", "")
 if nama_am:
@@ -27,4 +28,5 @@ if nama_am:
 else:
     filtered_df = df_database
 
+show_metrics(filtered_df)
 st.dataframe(filtered_df)

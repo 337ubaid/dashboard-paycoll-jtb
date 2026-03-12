@@ -64,3 +64,35 @@ def compute_metrics(df, segmen):
         "day6": pelanggan_day6
         
     }
+
+def show_metrics(df, segmen_target='-Semua-'):
+    df, metrics_saldo, metrics_pelanggan = compute_metrics(df, segmen_target)
+    col1, col2 = st.columns(2)
+    with col1:
+        ## METRIC SALDO AWAL
+        st.metric(
+            "Saldo Awal Bulan Ini",
+            f"{metrics_saldo['day6']:,.0f}",
+            f"{metrics_saldo['delta_day6']:,.0f}",
+            delta_color="inverse"
+        )
+        ## METRIC SALDO TODAY
+        st.metric(
+            "Saldo Hari Ini (dibanding 3 hari lalu)",
+            f"{metrics_saldo['today']:,.0f}",
+            f"{metrics_saldo['delta_yesterday']:,.0f}",
+            delta_color="inverse"
+        )
+    with col2:
+        st.metric(
+            "Pelanggan Awal Bulan Ini",
+            f"{metrics_pelanggan['day6']:,.0f}",
+            f"{metrics_pelanggan['delta_day6']:,.0f}",
+            delta_color="inverse"
+        )
+        st.metric(
+            "Pelanggan Hari Ini (dibanding 3 hari lalu)",
+            f"{metrics_pelanggan['today']:,.0f}",
+            f"{metrics_pelanggan['delta_yesterday']:,.0f}",
+            delta_color="inverse"
+        )      
