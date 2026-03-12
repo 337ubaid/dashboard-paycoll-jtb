@@ -5,7 +5,7 @@ from modules.sheets_client import load_database
 from modules.metrics import filter_data
 import streamlit as st
 import pandas as pd
-from utils.validator import format_currency
+from utils.validator import format_currency,print_dataframe, format_skala_rupiah
 from datetime import date
 
 TODAY = date.today()
@@ -21,35 +21,39 @@ segmen_target = pilih_segmen()
 
 df = filter_data(df_database,segmen_target, tanggal=TODAY)
 
+   # idnumber, bpname, saldo, AM, keterangan
+df = df[[
+    "idnumber",
+    "nama_akun",
+    "segmen",
+    "nama_am",
+    "saldo_akhir",
+    "kuadran"
+]]
+
 total_pelanggan = len(df)
 total_saldo = df["saldo_akhir"].sum()
 
 def render_kuadran(kuadran):
     st.subheader(f"Kuadran {kuadran}")
-    df_display = filter_data(df, segmen_target, kuadran=kuadran, tanggal=TODAY   )
-    # idnumber, bpname, saldo, AM, keterangan
-    df_display = df_display[[
-        "idnumber",
-        "nama_akun",
-        "segmen",
-        "nama_am",
-        "saldo_akhir",
-        "kuadran"
-    ]]
-
+    df_display = df[df["kuadran"] == kuadran]
+    
     total_pelanggan_kuadran = len(df_display)
     total_saldo_kuadran = df_display["saldo_akhir"].sum()
 
-    persen_pelanggan_kuadran = (total_pelanggan_kuadran/total_pelanggan)*100
-    persen_saldo_kuadran = (total_saldo_kuadran/total_saldo)*100
+    persen_pelanggan_kuadran = (total_pelanggan_kuadran / total_pelanggan * 100) if total_pelanggan else 0
+    persen_saldo_kuadran = (total_saldo_kuadran / total_saldo * 100) if total_saldo else 0
+
+    total_saldo_kuadran = format_skala_rupiah(total_saldo_kuadran)
 
     c1, c2 = st.columns(2)
     with c1:
         st.write(f"Total Pelanggan : {total_pelanggan_kuadran} ({persen_pelanggan_kuadran:.2f}%)")
     with c2:
         st.write(f"Total Saldo : {total_saldo_kuadran} ({persen_saldo_kuadran:.2f}%)")
-    st.dataframe(format_currency(df_display))
-    pass
+
+    print_dataframe(df_display.head(3))
+    
 
 c1, c2 = st.columns(2)
 with c1:
