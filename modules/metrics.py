@@ -2,13 +2,23 @@ import pandas as pd
 import streamlit as st
 from utils.date_utils import get_reference_dates
 
+today, yesterday, day6 = get_reference_dates()
 
-def filter_data(df, segmen):
-
-    if segmen != "ALL":
-        df = df[df["segmen"] == segmen]
-
+def filter_data(df, segmen, kuadran=None, tanggal=None):
     df = df[(df["saldo_akhir"] > 0) | (df["kuadran"] != 0)]
+    
+    if segmen != "-Semua-":
+        df = df[df["segmen"] == segmen]
+    
+    if kuadran is not None:
+        df = df[df["kuadran"] == kuadran]
+
+    if tanggal is not None:
+        df = df[df["tanggal"] == tanggal]
+
+    df = df.sort_values("saldo_akhir", ascending=False)
+    df = df.reset_index(drop=True)
+    df.index = df.index + 1
 
     return df
 
@@ -25,10 +35,8 @@ def get_value_by_date(df, target_date):
 
 def compute_metrics(df, segmen):
 
-    today, yesterday, day6 = get_reference_dates()
-
     df = filter_data(df, segmen)
-
+    
     val_today = get_value_by_date(df, today)
     val_yesterday = get_value_by_date(df, yesterday)
     val_day6 = get_value_by_date(df, day6)

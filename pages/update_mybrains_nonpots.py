@@ -6,6 +6,7 @@ from modules.cleaner import clean_header
 from utils.schema import REQUIRED_COLUMNS_MYBRAINS
 from utils.selector import pilih_segmen
 from modules.sheets_client import upload_data_to_sheet
+from utils.validator import format_currency
 
 # ====== Konfigurasi PAge ======
 st.set_page_config(
@@ -25,8 +26,8 @@ col1, col2 = st.columns(2)
 
 with col2:
     segmen_target = pilih_segmen()
-    bill_periode = st.date_input("Bill Periode", value="today")
-    bill_periode = bill_periode.strftime("%d/%m/%Y")
+    tanggal = st.date_input("Bill Periode", value="today")
+    tanggal = tanggal.strftime("%d/%m/%Y")
 
 with col1:
     file = st.file_uploader("Upload file", type=["xls"])
@@ -38,10 +39,10 @@ with col1:
             df = df[REQUIRED_COLUMNS_MYBRAINS].copy()
             
             # tambahkan kolom pendukung(segmen, tanggal, kuadran)
-            df = add_metadata(df, segmen_target, bill_periode)
+            df = add_metadata(df, segmen_target, tanggal)
             df = compute_lama_tunggakan(df)
             df = assign_kuadran(df)
-            st.dataframe(df)
+            st.dataframe(format_currency(df))
 
             # if st.button("Upload ke database"):
                 # upload_to_sheet(df)
@@ -54,7 +55,7 @@ with col1:
 if st.button("Upload ke Database", type="primary"):
 
     upload_data_to_sheet(df)
-
+    st.cache_data.clear()
     st.success("Data berhasil diupload")
 
 # from streamlit_extras.stylable_container import stylable_container
