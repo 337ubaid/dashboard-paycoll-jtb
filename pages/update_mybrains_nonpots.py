@@ -10,7 +10,7 @@ from utils.validator import format_currency
 
 # ====== Konfigurasi PAge ======
 st.set_page_config(
-    page_title="Update MyBrains NonPots", layout="wide", page_icon=":material/event_repeat:")
+    page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈")
 st.title("📈 Update MyBrains NonPots")
 sidebar()
 

@@ -12,17 +12,21 @@ TODAY = date.today()
 
 # ====== Konfigurasi PAge ======
 st.set_page_config(
-    page_title="Kuadran", layout="wide", page_icon="❇️")
+    page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈")
 st.title("❇️ Kuadran")
 sidebar()
 
 df_database = load_database()
-
 segmen_target = pilih_segmen()
+
+df = filter_data(df_database,segmen_target, tanggal=TODAY)
+
+total_pelanggan = len(df)
+total_saldo = df["saldo_akhir"].sum()
 
 def render_kuadran(kuadran):
     st.subheader(f"Kuadran {kuadran}")
-    df_display = filter_data(df_database, segmen_target, kuadran=kuadran, tanggal=TODAY   )
+    df_display = filter_data(df, segmen_target, kuadran=kuadran, tanggal=TODAY   )
     # idnumber, bpname, saldo, AM, keterangan
     df_display = df_display[[
         "idnumber",
@@ -32,6 +36,18 @@ def render_kuadran(kuadran):
         "saldo_akhir",
         "kuadran"
     ]]
+
+    total_pelanggan_kuadran = len(df_display)
+    total_saldo_kuadran = df_display["saldo_akhir"].sum()
+
+    persen_pelanggan_kuadran = (total_pelanggan_kuadran/total_pelanggan)*100
+    persen_saldo_kuadran = (total_saldo_kuadran/total_saldo)*100
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.write(f"Total Pelanggan : {total_pelanggan_kuadran} ({persen_pelanggan_kuadran:.2f}%)")
+    with c2:
+        st.write(f"Total Saldo : {total_saldo_kuadran} ({persen_saldo_kuadran:.2f}%)")
     st.dataframe(format_currency(df_display))
     pass
 
