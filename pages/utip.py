@@ -11,5 +11,11 @@ st.title("❇️ UTIP")
 
 
 from data.database import load_database_utip
+from utils.selector import pilih_segmen
+from services.filters import filter_utip_data
 
-st.dataframe(load_database_utip())
+df_db_utip = load_database_utip()
+segmen_target = pilih_segmen()
+
+df_db_utip = filter_utip_data(df_db_utip, segmen_target)
+st.dataframe(df_db_utip)

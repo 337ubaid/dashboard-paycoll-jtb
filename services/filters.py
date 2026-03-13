@@ -17,3 +17,12 @@ def filter_collection_data(df, segmen, kuadran=None, tanggal=None):
     reset_index(df)
 
     return df
+
+
+def filter_utip_data(df, segmen):
+    if segmen != "-Semua-":
+        df = df[df["SEGMEN"] == segmen]
+
+    # reset_index(df)
+
+    return df
