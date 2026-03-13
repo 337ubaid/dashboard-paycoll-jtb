@@ -30,10 +30,24 @@ def read_worksheet(worksheet_name):
     return pd.DataFrame(data)
 
 
-def append_rows(df, worksheet_name):
+def upsert_rows(df_new, worksheet_name):
 
+    df_new["idnumber"] = pd.to_numeric(df_new["idnumber"], errors="coerce").astype(
+        "Int64"
+    )
     worksheet = get_worksheet(worksheet_name)
 
-    rows = df.values.tolist()
+    df_existing = read_worksheet(worksheet_name)
 
-    worksheet.append_rows(rows, value_input_option="USER_ENTERED")
+    if df_existing.empty:
+        df_final = df_new
+
+    else:
+        df_final = pd.concat([df_existing, df_new], ignore_index=True)
+
+        df_final = df_final.drop_duplicates(
+            subset=["tanggal", "segmen", "idnumber"], keep="last"
+        )
+
+    worksheet.clear()
+    worksheet.update([df_final.columns.tolist()] + df_final.values.tolist())

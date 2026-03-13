@@ -1,11 +1,11 @@
 import streamlit as st
 from ui.layout import render_sidebar
 from modules.transform import add_metadata, compute_lama_tunggakan, assign_kuadran
-from modules.excel_reader import read_excel_mybrains
-from modules.cleaner import clean_header
+from data.excel import load_mybrains_excel
+from utils.dataframe_utils import normalize_columns
 from utils.schema import REQUIRED_COLUMNS_MYBRAINS
 from utils.selector import pilih_segmen
-from data.spreadsheet import append_rows
+from data.spreadsheet import upsert_rows
 from utils.validator import format_currency
 from core.config import WORKSHEETS
 
@@ -28,8 +28,8 @@ with col1:
     if file:
 
         try:
-            df = read_excel_mybrains(file)
-            df = clean_header(df)
+            df = load_mybrains_excel(file)
+            df = normalize_columns(df)
             df = df[REQUIRED_COLUMNS_MYBRAINS].copy()
 
             # tambahkan kolom pendukung(segmen, tanggal, kuadran)
@@ -44,6 +44,6 @@ with col1:
 
 if st.button("Upload ke Database", type="primary"):
 
-    append_rows(df, WORKSHEETS["collection"])
+    upsert_rows(df, WORKSHEETS["collection"])
     st.cache_data.clear()
     st.success("Data berhasil diupload")

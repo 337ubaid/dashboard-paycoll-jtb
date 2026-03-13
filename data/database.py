@@ -14,5 +14,4 @@ def load_database():
     df_pelanggan = read_worksheet(WORKSHEETS["pelanggan"])
 
     df = df_collection.merge(df_pelanggan, on="idnumber", how="left")
-
     return df
