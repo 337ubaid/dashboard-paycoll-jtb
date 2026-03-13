@@ -13,17 +13,17 @@ def get_spreadsheet_client():
     return gspread.authorize(creds)
 
 
-def get_worksheet(worksheet_name):
+def get_worksheet(spreadsheet_key, worksheet_name):
 
     client = get_spreadsheet_client()
 
-    return client.open_by_key(SPREADSHEET_ID).worksheet(worksheet_name)
+    return client.open_by_key(spreadsheet_key).worksheet(worksheet_name)
 
 
 @st.cache_data(ttl=600)
-def read_worksheet(worksheet_name):
+def read_worksheet(spreadsheet_key, worksheet_name):
 
-    worksheet = get_worksheet(worksheet_name)
+    worksheet = get_worksheet(spreadsheet_key, worksheet_name)
 
     data = worksheet.get_all_records()
 
@@ -35,9 +35,9 @@ def upsert_rows(df_new, worksheet_name):
     df_new["idnumber"] = pd.to_numeric(df_new["idnumber"], errors="coerce").astype(
         "Int64"
     )
-    worksheet = get_worksheet(worksheet_name)
+    worksheet = get_worksheet(SPREADSHEET_ID["nonpots"], worksheet_name)
 
-    df_existing = read_worksheet(worksheet_name)
+    df_existing = read_worksheet(SPREADSHEET_ID["nonpots"], worksheet_name)
 
     if df_existing.empty:
         df_final = df_new

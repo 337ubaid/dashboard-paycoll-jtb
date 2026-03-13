@@ -1,7 +1,7 @@
 import streamlit as st
 from ui.layout import render_sidebar
 from utils.selector import pilih_segmen
-from data.database import load_database
+from data.database import load_database_nonpots
 from services.filters import filter_collection_data
 import streamlit as st
 import pandas as pd
@@ -17,7 +17,7 @@ st.set_page_config(
 )
 st.title("❇️ Kuadran")
 
-df_database = load_database()
+df_database = load_database_nonpots()
 segmen_target = pilih_segmen()
 
 df = filter_collection_data(df_database, segmen_target, tanggal=TODAY)

@@ -1,8 +1,12 @@
 import streamlit as st
 
-# SpreadSheet
-SPREADSHEET_ID = st.secrets["SPREADSHEET_DATABASE"]["spreadsheet_id"]
-WORKSHEETS = {
+# SpreadSheet database
+SPREADSHEET_ID = {
+    "nonpots": st.secrets["SPREADSHEET_DATABASE"]["spreadsheet_id"],
+    "utip": st.secrets["SPREADSHEET_UTIP"]["spreadsheet_id"],
+}
+
+WORKSHEETS_NONPOTS = {
     "collection": st.secrets["SPREADSHEET_DATABASE"]["worksheet_database"],
     "pelanggan": "DATA_PELANGGAN",
 }

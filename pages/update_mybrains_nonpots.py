@@ -1,6 +1,6 @@
 import streamlit as st
 from ui.layout import render_sidebar
-from core.config import WORKSHEETS
+from core.config import WORKSHEETS_NONPOTS
 from data.spreadsheet import upsert_rows
 from data.excel import load_mybrains_excel
 from utils.dataframe_utils import normalize_columns
@@ -44,6 +44,6 @@ with col1:
 
 if st.button("Upload ke Database", type="primary"):
 
-    upsert_rows(df, WORKSHEETS["collection"])
+    upsert_rows(df, WORKSHEETS_NONPOTS["collection"])
     st.cache_data.clear()
     st.success("Data berhasil diupload")
