@@ -2,7 +2,7 @@ import streamlit as st
 from ui.layout import render_sidebar
 from utils.selector import pilih_segmen
 from data.database import load_database
-from modules.metrics import filter_dataframe
+from services.filters import filter_collection_data
 import streamlit as st
 import pandas as pd
 from utils.validator import format_currency, print_dataframe, format_skala_rupiah
@@ -20,7 +20,7 @@ st.title("❇️ Kuadran")
 df_database = load_database()
 segmen_target = pilih_segmen()
 
-df = filter_dataframe(df_database, segmen_target, tanggal=TODAY)
+df = filter_collection_data(df_database, segmen_target, tanggal=TODAY)
 
 # idnumber, bpname, saldo, AM, keterangan
 df = df[["idnumber", "nama_akun", "segmen", "nama_am", "saldo_akhir", "kuadran"]]

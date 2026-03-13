@@ -1,11 +1,9 @@
 import streamlit as st
 from ui.layout import render_sidebar
+from ui.metrics import render_dashboard_metrics
 from data.database import load_database
 from utils.validator import format_currency
-import streamlit as st
-import pandas as pd
 from utils.selector import pilih_segmen
-from modules.metrics import show_metrics
 
 render_sidebar()
 
@@ -20,6 +18,6 @@ df_db_nonpots = load_database()
 segmen_target = pilih_segmen()
 
 # METRIC
-show_metrics(df_db_nonpots, segmen_target)
+render_dashboard_metrics(df_db_nonpots, segmen_target)
 # SHOW ALL DATA
 st.dataframe(format_currency(df_db_nonpots))

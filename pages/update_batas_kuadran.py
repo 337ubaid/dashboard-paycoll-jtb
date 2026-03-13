@@ -1,11 +1,7 @@
 import streamlit as st
 from ui.layout import render_sidebar
-from utils.selector import pilih_segmen
-from data.database import load_database
-from modules.metrics import filter_dataframe
 import streamlit as st
 import pandas as pd
-from utils.validator import format_currency, print_dataframe, format_skala_rupiah
 from datetime import date
 from core.rule import BATAS_KUADRAN
 
