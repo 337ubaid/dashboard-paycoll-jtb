@@ -57,4 +57,4 @@ class DataSpreadsheetParser:
         return [c for c, t in self.schema.items() if t == "date"]
 
     def _int_columns(self):
-        return [c for c, t in self.schema.items() if t == "int"]
+        return [c for c, t in self.schema.items() if t in ["int", "id", "currency"]]

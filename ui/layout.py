@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.validator import format_currency
+from utils.formatter import format_currency
 
 
 def render_sidebar():

@@ -2,7 +2,6 @@ import streamlit as st
 from data.database import load_database_nonpots
 from ui.layout import render_sidebar, render_dataframe
 from ui.metrics import render_dashboard_metrics
-from utils.validator import format_currency
 from utils.selector import pilih_segmen
 from services.filters import filter_collection_data
 from core.constant import TODAY

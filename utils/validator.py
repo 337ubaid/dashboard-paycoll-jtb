@@ -1,12 +1,6 @@
 import pandas as pd
 import streamlit as st
-
-
-def format_currency(df):
-
-    cols = ["saldo_akhir", "0-3_bln", "4-6_bln", "7-12_bln", "13-24_bln", ">_24_bln"]
-
-    return df.style.format({c: "{:,.0f}" for c in cols})
+from utils.formatter import format_currency
 
 
 def format_skala_rupiah(x):
