@@ -1,6 +1,6 @@
 import streamlit as st
 from data.database import load_database_nonpots
-from ui.layout import render_sidebar
+from ui.layout import render_sidebar, render_dataframe
 from ui.metrics import render_dashboard_metrics
 from utils.validator import format_currency
 from utils.selector import pilih_segmen
@@ -22,6 +22,6 @@ segmen_target = pilih_segmen()
 # METRIC
 render_dashboard_metrics(df_nonpots, segmen_target)
 # SHOW ALL DATA
-latest_date = df_nonpots["tanggal"].max()
+latest_date = df_nonpots["tanggal"].max()  # FIX -> globally accessible
 df_nonpots = filter_collection_data(df_nonpots, segmen_target, tanggal=latest_date)
-st.dataframe(format_currency(df_nonpots))
+render_dataframe(df_nonpots)

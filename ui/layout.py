@@ -1,4 +1,5 @@
 import streamlit as st
+from utils.validator import format_currency
 
 
 def render_sidebar():
@@ -24,3 +25,7 @@ def render_sidebar():
             "pages/tunggakan_am.py", label="Tunggakan AM", icon=":material/dataset:"
         )
         st.page_link("pages/utip.py", label="UTIP", icon=":material/dataset:")
+
+
+def render_dataframe(df):
+    st.dataframe(format_currency(df))
