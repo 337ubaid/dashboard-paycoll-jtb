@@ -15,12 +15,13 @@ st.set_page_config(
 )
 st.title("📈 Dashboard Data Collection Jatim Barat")
 
-df_db_nonpots = load_database_nonpots()
+df_nonpots = load_database_nonpots()
 
 segmen_target = pilih_segmen()
 
 # METRIC
-render_dashboard_metrics(df_db_nonpots, segmen_target)
+render_dashboard_metrics(df_nonpots, segmen_target)
 # SHOW ALL DATA
-df_db_nonpots = filter_collection_data(df_db_nonpots, segmen_target, tanggal=TODAY)
-st.dataframe(format_currency(df_db_nonpots))
+latest_date = df_nonpots["tanggal"].max()
+df_nonpots = filter_collection_data(df_nonpots, segmen_target, tanggal=latest_date)
+st.dataframe(format_currency(df_nonpots))

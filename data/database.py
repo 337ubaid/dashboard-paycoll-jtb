@@ -1,24 +1,27 @@
 import streamlit as st
 
 from data.spreadsheet import read_worksheet
-from core.config import SPREADSHEET_ID, WORKSHEETS_NONPOTS
-from utils.validator import get_data_formatted
+from core.config import SPREADSHEET_ID, WORKSHEET
+from utils.parser import parse_dataframe
 
 
 @st.cache_data(ttl=600)
 def load_database_nonpots():
-    spreadsheet_key = SPREADSHEET_ID["nonpots"]
-    df_collection = read_worksheet(spreadsheet_key, WORKSHEETS_NONPOTS["collection"])
-    df_collection = get_data_formatted(df_collection)
-
-    df_pelanggan = read_worksheet(spreadsheet_key, WORKSHEETS_NONPOTS["pelanggan"])
+    df_collection = load_database(SPREADSHEET_ID["nonpots"], "collection")
+    df_pelanggan = load_database(SPREADSHEET_ID["nonpots"], "pelanggan")
 
     df = df_collection.merge(df_pelanggan, on="idnumber", how="left")
+
     return df
 
 
 @st.cache_data(ttl=600)
 def load_database_utip():
-    spreadsheet_key = SPREADSHEET_ID["utip"]
-    df = read_worksheet(spreadsheet_key, "UTIP MARET")
+    df = load_database(SPREADSHEET_ID["utip"], "utip")
+    return df
+
+
+def load_database(spreadsheet_key, database_name):
+    df = read_worksheet(spreadsheet_key, WORKSHEET[database_name])
+    df = parse_dataframe(df, database_name)
     return df

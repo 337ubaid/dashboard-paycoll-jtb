@@ -20,7 +20,9 @@ st.title("❇️ Kuadran")
 df_database = load_database_nonpots()
 segmen_target = pilih_segmen()
 
-df = filter_collection_data(df_database, segmen_target, tanggal=TODAY)
+latest_date = df_database["tanggal"].max()
+
+df = filter_collection_data(df_database, segmen_target, tanggal=latest_date)
 
 # idnumber, bpname, saldo, AM, keterangan
 df = df[["idnumber", "nama_akun", "segmen", "nama_am", "saldo_akhir", "kuadran"]]

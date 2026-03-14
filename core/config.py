@@ -7,10 +7,16 @@ SPREADSHEET_ID = {
 }
 
 WORKSHEETS_NONPOTS = {
-    "collection": st.secrets["SPREADSHEET_DATABASE"]["worksheet_database"],
+    "collection": "DATABASE",
     "pelanggan": "DATA_PELANGGAN",
 }
 
+WORKSHEETS_UTIP = {"utip": "UTIP MARET"}
+
+WORKSHEET = {
+    **WORKSHEETS_NONPOTS,
+    **WORKSHEETS_UTIP,
+}
 GCP_SERVICE_ACCOUNT = st.secrets["GCP_SERVICE_ACCOUNT"]
 
 SCOPE = [

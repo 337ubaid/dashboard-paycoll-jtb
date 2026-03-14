@@ -1,3 +1,4 @@
+# need to remove
 REQUIRED_COLUMNS_MYBRAINS = [
     "idnumber",
     "saldo_akhir",
@@ -17,5 +18,4 @@ COLUMN_TYPES_MYBRAIN = {
     "13-24_bln": int,
     ">_24_bln": int,
 }
-
 SEGMEN = ["-Semua-", "DGS", "DPS", "DSS", "RBS", "UNIDENTIFIED"]
