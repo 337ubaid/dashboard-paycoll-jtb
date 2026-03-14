@@ -1,5 +1,5 @@
 import streamlit as st
-from ui.layout import render_sidebar
+from ui.layout import render_sidebar, render_dataframe
 from data.database import load_database_nonpots
 from services.filters import filter_collection_data
 from ui.metrics import render_dashboard_metrics
@@ -26,4 +26,4 @@ else:
     filtered_df = df_database
 
 render_dashboard_metrics(filtered_df)
-st.dataframe(filtered_df)
+render_dataframe(filtered_df)

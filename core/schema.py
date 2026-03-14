@@ -35,7 +35,7 @@ SCHEMA_DATABASE_UTIP = {
     "DATE": "date",
     "MONTH": "int",
     "YEAR": "int",
-    "Periode UTIP": "int",
+    "Periode UTIP": "str",
     "REFERENCE": "str",
     "TYPE": "str",
     "VA": "str",

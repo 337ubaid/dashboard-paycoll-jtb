@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.formatter import format_currency
+from utils.formatter import format_currency, format_headers
 
 
 def render_sidebar():
@@ -28,4 +28,6 @@ def render_sidebar():
 
 
 def render_dataframe(df):
-    st.dataframe(format_currency(df))
+    header_map = format_headers(df)
+    df = format_currency(df)
+    st.dataframe(df, column_config=header_map)
