@@ -24,7 +24,7 @@ with col2:
     tanggal = tanggal.strftime("%d/%m/%Y")
 
 with col1:
-    file = st.file_uploader("Upload file", type=["xls"])
+    file = st.file_uploader("Upload file", type=["xls"], key="upload_file")
     if file:
 
         try:
@@ -46,4 +46,12 @@ if st.button("Upload ke Database", type="primary"):
 
     upsert_rows_mybrains(df, WORKSHEETS_NONPOTS["collection"])
     st.cache_data.clear()
+    if "upload_file" in st.session_state:
+        del st.session_state["upload_file"]
+    if "segmen_input" in st.session_state:
+        del st.session_state["segmen_input"]
+
     st.success("Data berhasil diupload")
+
+    # st.switch_page("pages/kuadran.py")
+    st.switch_page("pages/update_mybrains_nonpots.py")

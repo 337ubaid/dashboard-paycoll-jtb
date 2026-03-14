@@ -1,5 +1,5 @@
 import streamlit as st
-from ui.layout import render_sidebar
+from ui.layout import render_sidebar, render_dataframe
 
 render_sidebar()
 
@@ -18,4 +18,4 @@ df_db_utip = load_database_utip()
 segmen_target = pilih_segmen()
 
 df_db_utip = filter_utip_data(df_db_utip, segmen_target)
-st.dataframe(df_db_utip)
+render_dataframe(df_db_utip)

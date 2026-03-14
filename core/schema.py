@@ -12,11 +12,11 @@ SCHEMA_DATABASE_PELANGGAN = {
     "idnumber": "int",
     "nama_akun": "str",
     "nama_am": "str",
-    "ALAMAT": "str",
-    "Witel": "str",
-    "Bussiness Share": "str",
-    "Divisi": "str",
-    "Segmen": "str",
+    "alamat": "str",
+    "witel": "str",
+    "bussiness share": "str",
+    "divisi": "str",
+    "segmen_2": "str",
 }
 
 SCHEMA_DATABASE_NONPOTS = {
