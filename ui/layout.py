@@ -27,7 +27,58 @@ def render_sidebar():
         st.page_link("pages/utip.py", label="UTIP", icon=":material/dataset:")
 
 
+def print_dataframe(df):
+    df = df.sort_values("saldo_akhir", ascending=False)
+    df = df.reset_index(drop=True)
+    df.index = df.index + 1
+    render_dataframe(df)
+
+
 def render_dataframe(df):
     header_map = format_headers(df)
     df = format_currency(df)
     st.dataframe(df, column_config=header_map)
+
+
+from utils.formatter import format_skala_rupiah
+from core.constant import KUADRAN_INFO
+
+
+def render_kuadran(df, kuadran, total_pelanggan, total_saldo):
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader(f"Kuadran {kuadran}")
+    with col2:
+        render_kuadran_legend(kuadran)
+
+    df_display = df[df["kuadran"] == kuadran]
+
+    total_pelanggan_k = len(df_display)
+    total_saldo_k = df_display["saldo_akhir"].sum()
+
+    persen_pelanggan = (
+        (total_pelanggan_k / total_pelanggan * 100) if total_pelanggan else 0
+    )
+    persen_saldo = (total_saldo_k / total_saldo * 100) if total_saldo else 0
+
+    saldo = format_skala_rupiah(total_saldo_k)
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.write(f"Total Pelanggan : {total_pelanggan_k} ({persen_pelanggan:.2f}%)")
+
+    with c2:
+        st.write(f"Total Saldo : {saldo} ({persen_saldo:.2f}%)")
+
+    print_dataframe(df_display.head(3))
+
+
+def render_kuadran_legend(kuadran):
+
+    info = KUADRAN_INFO[kuadran]
+
+    text = info["label"]
+    ui_type = info["ui"]
+
+    getattr(st, ui_type)(text)

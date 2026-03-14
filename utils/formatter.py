@@ -24,3 +24,14 @@ def get_currency_columns(df):
         col for col, t in ALL_SCHEMAS.items() if t == "currency" and col in df.columns
     ]
     return cols
+
+
+def format_skala_rupiah(x):
+    if x >= 1_000_000_000:
+        return f"{x/1_000_000_000:.1f} M"
+    elif x >= 1_000_000:
+        return f"{x/1_000_000:.1f} Jt"
+    elif x >= 1_000:
+        return f"{x/1_000:.1f} Rb"
+    else:
+        return f"{x:.0f}"

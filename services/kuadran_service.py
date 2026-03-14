@@ -1,5 +1,6 @@
 import numpy as np
 from core.rule import BATAS_KUADRAN
+from services.filters import filter_collection_data
 
 
 def assign_kuadran_labels(df):
@@ -24,3 +25,16 @@ def assign_kuadran_labels(df):
     df["kuadran"] = np.select(conditions, choices)
 
     return df
+
+
+def prepare_kuadran_data(df, segmen, columns):
+    latest_date = df["tanggal"].max()
+
+    df = filter_collection_data(df, segmen, tanggal=latest_date)
+
+    df = df[columns]
+
+    total_pelanggan = len(df)
+    total_saldo = df["saldo_akhir"].sum()
+
+    return df, total_pelanggan, total_saldo

@@ -1,12 +1,10 @@
 import streamlit as st
-from ui.layout import render_sidebar
+from core.constant import COLUMNS_KUADRAN
+from ui.layout import render_sidebar, render_kuadran
 from utils.selector import pilih_segmen
-from data.database import load_database_nonpots
-from services.filters import filter_collection_data
-import streamlit as st
-import pandas as pd
-from utils.validator import format_currency, print_dataframe, format_skala_rupiah
+
 from datetime import date
+
 
 TODAY = date.today()
 render_sidebar()
@@ -17,57 +15,27 @@ st.set_page_config(
 )
 st.title("❇️ Kuadran")
 
+
+from services.kuadran_service import prepare_kuadran_data
+from ui.layout import render_kuadran
+from data.database import load_database_nonpots
+
 df_database = load_database_nonpots()
+
 segmen_target = pilih_segmen()
 
-latest_date = df_database["tanggal"].max()
-
-df = filter_collection_data(df_database, segmen_target, tanggal=latest_date)
-
-# idnumber, bpname, saldo, AM, keterangan
-df = df[["idnumber", "nama_akun", "segmen", "nama_am", "saldo_akhir", "kuadran"]]
-
-total_pelanggan = len(df)
-total_saldo = df["saldo_akhir"].sum()
-
-
-def render_kuadran(kuadran):
-    st.subheader(f"Kuadran {kuadran}")
-    df_display = df[df["kuadran"] == kuadran]
-
-    total_pelanggan_kuadran = len(df_display)
-    total_saldo_kuadran = df_display["saldo_akhir"].sum()
-
-    persen_pelanggan_kuadran = (
-        (total_pelanggan_kuadran / total_pelanggan * 100) if total_pelanggan else 0
-    )
-    persen_saldo_kuadran = (
-        (total_saldo_kuadran / total_saldo * 100) if total_saldo else 0
-    )
-
-    total_saldo_kuadran = format_skala_rupiah(total_saldo_kuadran)
-
-    c1, c2 = st.columns(2)
-    with c1:
-        st.write(
-            f"Total Pelanggan : {total_pelanggan_kuadran} ({persen_pelanggan_kuadran:.2f}%)"
-        )
-    with c2:
-        st.write(f"Total Saldo : {total_saldo_kuadran} ({persen_saldo_kuadran:.2f}%)")
-
-    print_dataframe(df_display.head(3))
-    #
-    # st.dataframe(format_currency(df_display))
-
+df, total_pelanggan, total_saldo = prepare_kuadran_data(
+    df_database, segmen_target, COLUMNS_KUADRAN
+)
 
 c1, c2 = st.columns(2)
 with c1:
-    render_kuadran(1)
+    render_kuadran(df, 1, total_pelanggan, total_saldo)
 with c2:
-    render_kuadran(2)
+    render_kuadran(df, 2, total_pelanggan, total_saldo)
 
 c3, c4 = st.columns(2)
 with c3:
-    render_kuadran(3)
+    render_kuadran(df, 3, total_pelanggan, total_saldo)
 with c4:
-    render_kuadran(4)
+    render_kuadran(df, 4, total_pelanggan, total_saldo)
