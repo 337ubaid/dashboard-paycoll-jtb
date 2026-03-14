@@ -6,6 +6,8 @@ def render_dashboard_metrics(df, segmen="-Semua-"):
 
     df, saldo, pelanggan = calculate_dashboard_metrics(df, segmen)
 
+    latest_date = df["tanggal"].max()
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -39,3 +41,5 @@ def render_dashboard_metrics(df, segmen="-Semua-"):
             f"{pelanggan['delta_yesterday']:,.0f}",
             delta_color="inverse",
         )
+
+    st.info(f"Terakhir diperbarui **{latest_date}**")

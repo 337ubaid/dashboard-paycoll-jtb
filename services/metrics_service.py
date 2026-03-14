@@ -8,12 +8,13 @@ today, yesterday, day6 = get_reference_dates()
 def calculate_dashboard_metrics(df, segmen):
 
     df = filter_collection_data(df, segmen)
+    latest_date = df["tanggal"].max()
 
-    val_today = sum_saldo_by_date(df, today)
+    val_today = sum_saldo_by_date(df, latest_date)
     val_yesterday = sum_saldo_by_date(df, yesterday)
     val_day6 = sum_saldo_by_date(df, day6)
 
-    pelanggan_today = count_pelanggan_by_date(df, today)
+    pelanggan_today = count_pelanggan_by_date(df, latest_date)
     pelanggan_yesterday = count_pelanggan_by_date(df, yesterday)
     pelanggan_day6 = count_pelanggan_by_date(df, day6)
 
