@@ -21,10 +21,21 @@ df_db_utip = filter_utip_data(df_db_utip, segmen_target)
 
 
 from ui.pie import plot_pie
+from ui.pivot import pivot_am_keterangan
 
-mode = st.selectbox("Value", ["customer", "saldo"])
+mode = st.selectbox("Total", ["customer", "saldo"])
 
 fig = plot_pie(df_db_utip, "KET 2", mode)
-st.plotly_chart(fig, use_container_width=True)
+pivot = pivot_am_keterangan(df_db_utip)
 
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("Distribusi Keterangan UTIP")
+    st.plotly_chart(fig, use_container_width=True)
+with col2:
+    st.subheader("Tunggakan tiap AM")
+    st.dataframe(pivot, use_container_width=True)
+st.subheader("Detail Data UTIP")
 render_dataframe(df_db_utip)
