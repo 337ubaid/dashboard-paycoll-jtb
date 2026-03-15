@@ -41,7 +41,7 @@ def render_dataframe(df):
 
 
 from utils.formatter import format_skala_rupiah
-from core.constant import KUADRAN_INFO
+from core.rule import KUADRAN_INFO
 
 
 def render_kuadran(df, kuadran, total_pelanggan, total_saldo):

@@ -51,3 +51,14 @@ def upsert_rows_mybrains(df_new, worksheet_name):
 
     worksheet.clear()
     worksheet.update([df_final.columns.tolist()] + df_final.values.tolist())
+
+
+def save_new_kuadran(df: pd.DataFrame):
+
+    worksheet = get_worksheet_object(SPREADSHEET_ID["nonpots"], "collection")
+    worksheet.clear()
+
+    data = [df.columns.values.tolist()] + df.values.tolist()
+
+    # upload ulang
+    worksheet.update(data)
