@@ -44,6 +44,20 @@ from utils.formatter import format_skala_rupiah
 from core.rule import KUADRAN_INFO
 
 
+def render_all_kuadran(df, total_pelanggan, total_saldo):
+    c1, c2 = st.columns(2)
+    with c1:
+        render_kuadran(df, 1, total_pelanggan, total_saldo)
+    with c2:
+        render_kuadran(df, 2, total_pelanggan, total_saldo)
+
+    c3, c4 = st.columns(2)
+    with c3:
+        render_kuadran(df, 3, total_pelanggan, total_saldo)
+    with c4:
+        render_kuadran(df, 4, total_pelanggan, total_saldo)
+
+
 def render_kuadran(df, kuadran, total_pelanggan, total_saldo):
     (
         col1,

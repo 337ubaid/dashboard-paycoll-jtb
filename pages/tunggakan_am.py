@@ -1,15 +1,21 @@
 import streamlit as st
-from ui.layout import render_sidebar, render_dataframe
+from ui.layout import (
+    render_sidebar,
+    render_dataframe,
+    print_dataframe,
+    render_all_kuadran,
+)
 from data.database import load_database_nonpots
 from services.filters import filter_collection_data
 from ui.metrics import render_dashboard_metrics
 from datetime import date
-from core.constant import COLUMNS_TUNGGAKAN_AM
+from core.constant import COLUMNS_TUNGGAKAN_AM, COLUMNS_KUADRAN
+from services.kuadran_service import prepare_kuadran_data
 
 TODAY = date.today()
 render_sidebar()
 
-# ====== Konfigurasi PAge ======
+# ====== Konfigurasi Page ======
 st.set_page_config(
     page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
 )
@@ -28,7 +34,19 @@ else:
     filtered_df = df_database
 
 render_dashboard_metrics(filtered_df)
+
+tab_summary, tab_kuadran = st.tabs(["Summary", "Kuadran"])
+
 filtered_df = filter_collection_data(filtered_df, "-Semua-", tanggal=latest_date)
-filtered_df = filtered_df[COLUMNS_TUNGGAKAN_AM]
-filtered_df.index = filtered_df.reset_index(drop=True).index + 1
-render_dataframe(filtered_df)
+
+
+with tab_summary:
+    print_dataframe(filtered_df[COLUMNS_TUNGGAKAN_AM])
+
+with tab_kuadran:
+    filtered_df, total_pelanggan, total_saldo = prepare_kuadran_data(
+        filtered_df, "-Semua-", COLUMNS_KUADRAN
+    )
+
+    render_all_kuadran(filtered_df, total_pelanggan, total_saldo)
+    pass
