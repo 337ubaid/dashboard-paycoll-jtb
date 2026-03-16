@@ -22,7 +22,9 @@ def render_sidebar():
             icon=":material/dataset:",
         )
         st.page_link(
-            "pages/tunggakan_am.py", label="Tunggakan AM", icon=":material/dataset:"
+            "pages/tunggakan_am.py",
+            label="Tunggakan AM",
+            icon=":material/person_search:",
         )
         st.page_link("pages/utip.py", label="UTIP", icon=":material/money_bag:")
 
