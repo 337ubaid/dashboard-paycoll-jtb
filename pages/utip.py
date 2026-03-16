@@ -1,5 +1,5 @@
 import streamlit as st
-from ui.layout import render_sidebar, render_dataframe
+from ui.layout import render_sidebar, render_dataframe, render_kuadran_utip
 
 render_sidebar()
 
@@ -24,11 +24,20 @@ from ui.pie import plot_pie
 from ui.pivot import pivot_am_keterangan
 
 mode = st.selectbox("Total", ["customer", "saldo"])
+# mode = st.segmented_control("Total", ["customer", "saldo"])
 
 fig = plot_pie(df_db_utip, "KET 2", mode)
 pivot = pivot_am_keterangan(df_db_utip)
 
 
+from core.constant import COLUMNS_KUADRAN_UTIP
+from services.kuadran_service import prepare_kuadran_utip
+
+df, total_pelanggan, total_saldo = prepare_kuadran_utip(
+    df_db_utip, COLUMNS_KUADRAN_UTIP
+)
+
+# PIE
 col1, col2 = st.columns(2)
 
 with col1:
@@ -37,5 +46,22 @@ with col1:
 with col2:
     st.subheader("Tunggakan tiap AM")
     st.dataframe(pivot, use_container_width=True)
+
+# KUADRAN
+st.divider()
+c1, c2 = st.columns(2)
+with c1:
+    render_kuadran_utip(df, 1, total_pelanggan, total_saldo)
+with c2:
+    render_kuadran_utip(df, 2, total_pelanggan, total_saldo)
+
+c3, c4 = st.columns(2)
+with c3:
+    render_kuadran_utip(df, 3, total_pelanggan, total_saldo)
+with c4:
+    render_kuadran_utip(df, 4, total_pelanggan, total_saldo)
+st.divider()
+
+
 st.subheader("Detail Data UTIP")
-render_dataframe(df_db_utip)
+st.dataframe(df_db_utip)

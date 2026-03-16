@@ -10,3 +10,14 @@ COLUMNS_KUADRAN = [
     "saldo_akhir",
     "kuadran",
 ]
+
+COLUMNS_KUADRAN_UTIP = [
+    "PAYMENT-ID",
+    "SEGMEN",
+    "ACCTNO",
+    "AM",
+    "SALDO AKHIR",
+    "KET",
+    "KET 2",
+    "kuadran",
+]

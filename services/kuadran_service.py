@@ -40,6 +40,15 @@ def prepare_kuadran_data(df, segmen, columns):
     return df, total_pelanggan, total_saldo
 
 
+def prepare_kuadran_utip(df, columns):
+    df = df[columns]
+
+    total_pelanggan = len(df)
+    total_saldo = df["SALDO AKHIR"].sum()
+
+    return df, total_pelanggan, total_saldo
+
+
 import numpy as np
 import pandas as pd
 from core.rule import BATAS_KUADRAN

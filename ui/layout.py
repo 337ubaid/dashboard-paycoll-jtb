@@ -45,12 +45,14 @@ from core.rule import KUADRAN_INFO
 
 
 def render_kuadran(df, kuadran, total_pelanggan, total_saldo):
-    col1, col2 = st.columns(2)
+    (
+        col1,
+        col2,
+    ) = st.columns(2)
     with col1:
         st.subheader(f"Kuadran {kuadran}")
     with col2:
         render_kuadran_legend(kuadran)
-
     df_display = df[df["kuadran"] == kuadran]
 
     total_pelanggan_k = len(df_display)
@@ -72,6 +74,41 @@ def render_kuadran(df, kuadran, total_pelanggan, total_saldo):
         st.write(f"Total Saldo : {saldo} ({persen_saldo:.2f}%)")
 
     print_dataframe(df_display.head(3))
+
+
+def render_kuadran_utip(df, kuadran, total_pelanggan, total_saldo):
+    (
+        col1,
+        col2,
+    ) = st.columns(2)
+    with col1:
+        st.subheader(f"Kuadran {kuadran}")
+    with col2:
+        render_kuadran_legend(kuadran)
+    df_display = df[df["kuadran"] == kuadran]
+
+    total_pelanggan_k = len(df_display)
+    total_saldo_k = df_display["SALDO AKHIR"].sum()
+
+    persen_pelanggan = (
+        (total_pelanggan_k / total_pelanggan * 100) if total_pelanggan else 0
+    )
+    persen_saldo = (total_saldo_k / total_saldo * 100) if total_saldo else 0
+
+    saldo = format_skala_rupiah(total_saldo_k)
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.write(f"Total Pelanggan : {total_pelanggan_k} ({persen_pelanggan:.2f}%)")
+
+    with c2:
+        st.write(f"Total Saldo : {saldo} ({persen_saldo:.2f}%)")
+
+    df_display = df_display.sort_values("SALDO AKHIR", ascending=False)
+    df_display = df_display.reset_index(drop=True)
+    df_display.index = df_display.index + 1
+    render_dataframe(df_display.head(3))
 
 
 def render_kuadran_legend(kuadran):
