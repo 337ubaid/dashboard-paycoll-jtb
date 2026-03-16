@@ -18,6 +18,10 @@ def plot_pie(df, col_ket="KET 2", value_type="customer"):
 
     fig = px.pie(data, names=col_ket, values="total", hole=0.4)
 
-    fig.update_traces(marker=dict(colors=colors))
+    fig.update_traces(
+        marker=dict(colors=colors),
+        texttemplate="%{label}<br>%{value}",
+        # textinfo="label+value",
+    )
 
     return fig

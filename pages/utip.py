@@ -39,13 +39,21 @@ df, total_pelanggan, total_saldo = prepare_kuadran_utip(
 
 # PIE
 col1, col2 = st.columns(2)
+with col1:
+    c1, c2 = st.columns(2)
+    c1.metric("Total UTIP", f"{total_saldo:,.0f}")
+    c2.metric("Total Payment ID", f"{total_pelanggan:,.0f}")
 
+st.divider()
+
+col1, col2 = st.columns(2)
 with col1:
     st.subheader("Distribusi Keterangan UTIP")
     st.plotly_chart(fig, use_container_width=True)
 with col2:
     st.subheader("Tunggakan tiap AM")
     st.dataframe(pivot, use_container_width=True)
+
 
 # KUADRAN
 st.divider()
