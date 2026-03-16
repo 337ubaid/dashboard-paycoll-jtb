@@ -40,7 +40,7 @@ SCHEMA_DATABASE_UTIP = {
     "TYPE": "str",
     "VA": "str",
     "REGEX": "str",
-    "ACCTNO": "int",
+    "ACCTNO": "str",
     "STANDART CUSTOMER NAME": "str",
     "CURR": "str",
     "SALDO AWAL": "currency",

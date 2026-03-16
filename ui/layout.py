@@ -24,7 +24,7 @@ def render_sidebar():
         st.page_link(
             "pages/tunggakan_am.py", label="Tunggakan AM", icon=":material/dataset:"
         )
-        st.page_link("pages/utip.py", label="UTIP", icon=":material/dataset:")
+        st.page_link("pages/utip.py", label="UTIP", icon=":material/money_bag:")
 
 
 def print_dataframe(df):
