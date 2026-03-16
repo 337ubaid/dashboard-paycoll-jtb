@@ -23,11 +23,11 @@ df_db_utip = filter_utip_data(df_db_utip, segmen_target)
 from ui.pie import plot_pie
 from ui.pivot import pivot_am_keterangan
 
-mode = st.selectbox("Total", ["customer", "saldo"])
+mode = st.selectbox("Total", ["saldo", "customer"])
 # mode = st.segmented_control("Total", ["customer", "saldo"])
 
 fig = plot_pie(df_db_utip, "KET 2", mode)
-pivot = pivot_am_keterangan(df_db_utip)
+pivot = pivot_am_keterangan(df_db_utip, mode)
 
 
 from core.constant import COLUMNS_KUADRAN_UTIP
@@ -52,7 +52,15 @@ with col1:
     st.plotly_chart(fig, use_container_width=True)
 with col2:
     st.subheader("Tunggakan tiap AM")
-    st.dataframe(pivot, use_container_width=True)
+    st.dataframe(
+        pivot,
+        column_config={
+            col: st.column_config.NumberColumn(format="%,d")
+            for col in pivot.columns
+            if col != "AM"
+        },
+        use_container_width=True,
+    )
 
 
 # KUADRAN

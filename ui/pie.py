@@ -11,7 +11,7 @@ KET_COLOR_MAP = {
 DEFAULT_COLOR = "#bdbdbd"
 
 
-def plot_pie(df, col_ket="KET 2", value_type="customer"):
+def plot_pie(df, col_ket="KET 2", value_type="saldo"):
 
     data = agg_keterangan(df, col_ket, value_type)
     colors = [KET_COLOR_MAP.get(v.lower(), DEFAULT_COLOR) for v in data[col_ket]]
