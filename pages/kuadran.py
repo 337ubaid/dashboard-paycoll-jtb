@@ -29,3 +29,16 @@ df, total_pelanggan, total_saldo = prepare_kuadran_data(
 )
 
 render_all_kuadran(df, total_pelanggan, total_saldo)
+
+from ui.layout import print_dataframe
+
+# TODO jadikan fungsi
+st.divider()
+st.subheader("Detail Kuadran")
+
+tab_names = ["Kuadran 1", "Kuadran 2", "Kuadran 3", "Kuadran 4"]
+tabs = st.tabs(tab_names)
+
+for i, tab in enumerate(tabs, start=1):
+    with tab:
+        print_dataframe(df[df["kuadran"] == i])

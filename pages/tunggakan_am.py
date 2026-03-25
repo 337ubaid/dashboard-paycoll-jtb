@@ -50,3 +50,13 @@ with tab_kuadran:
 
     render_all_kuadran(filtered_df, total_pelanggan, total_saldo)
     pass
+
+st.divider()
+st.subheader("Detail Kuadran")
+
+tab_names = ["Kuadran 1", "Kuadran 2", "Kuadran 3", "Kuadran 4"]
+tabs = st.tabs(tab_names)
+
+for i, tab in enumerate(tabs, start=1):
+    with tab:
+        print_dataframe(filtered_df[filtered_df["kuadran"] == i])
