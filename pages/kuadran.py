@@ -1,37 +1,32 @@
 import streamlit as st
-from core.constant import COLUMNS_KUADRAN
-from ui.layout import render_sidebar, render_all_kuadran
+from core.constant import COLUMNS_KUADRAN, TODAY
+from ui.layout import render_sidebar, render_all_kuadran, print_sort_dataframe
 from utils.selector import pilih_segmen
+from services.kuadran_service import prepare_kuadran_data
+from data.database import load_database_nonpots
 
-from datetime import date
 
-
-TODAY = date.today()
 render_sidebar()
+df_database = load_database_nonpots()
 
-# ====== Konfigurasi PAge ======
+# ====== Konfigurasi Page ======
 st.set_page_config(
     page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
 )
 st.title("❇️ Kuadran")
+# ==============================
 
-
-from services.kuadran_service import prepare_kuadran_data
-from ui.layout import render_kuadran
-from data.database import load_database_nonpots
-
-df_database = load_database_nonpots()
-
+# ====== Select Segmen ======
 segmen_target = pilih_segmen()
 
 df, total_pelanggan, total_saldo = prepare_kuadran_data(
     df_database, segmen_target, COLUMNS_KUADRAN
 )
 
+# ====== Print Kuadran ======
 render_all_kuadran(df, total_pelanggan, total_saldo)
 
-from ui.layout import print_dataframe
-
+# ====== Detail Kuadran ======
 # TODO jadikan fungsi
 st.divider()
 st.subheader("Detail Kuadran")
@@ -41,4 +36,4 @@ tabs = st.tabs(tab_names)
 
 for i, tab in enumerate(tabs, start=1):
     with tab:
-        print_dataframe(df[df["kuadran"] == i])
+        print_sort_dataframe(df[df["kuadran"] == i])

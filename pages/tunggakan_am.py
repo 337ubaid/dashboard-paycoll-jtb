@@ -2,7 +2,7 @@ import streamlit as st
 from ui.layout import (
     render_sidebar,
     render_dataframe,
-    print_dataframe,
+    print_sort_dataframe,
     render_all_kuadran,
 )
 from data.database import load_database_nonpots
@@ -41,7 +41,7 @@ filtered_df = filter_collection_data(filtered_df, "-Semua-", tanggal=latest_date
 
 
 with tab_summary:
-    print_dataframe(filtered_df[COLUMNS_TUNGGAKAN_AM])
+    print_sort_dataframe(filtered_df[COLUMNS_TUNGGAKAN_AM])
 
 with tab_kuadran:
     filtered_df, total_pelanggan, total_saldo = prepare_kuadran_data(
@@ -59,4 +59,4 @@ tabs = st.tabs(tab_names)
 
 for i, tab in enumerate(tabs, start=1):
     with tab:
-        print_dataframe(filtered_df[filtered_df["kuadran"] == i])
+        print_sort_dataframe(filtered_df[filtered_df["kuadran"] == i])
