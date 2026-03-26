@@ -26,7 +26,7 @@ segmen_target = pilih_segmen()
 render_dashboard_metrics(df_nonpots, segmen_target)
 
 # Grafik
-st.subheader("Grafik")
+st.subheader("Tren Saldo Harian")
 c1, c2 = st.columns(2)
 with c1:
     df_chart = prepare_total_with_forecast(

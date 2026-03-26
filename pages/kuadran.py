@@ -12,7 +12,8 @@ from datetime import date
 from core.constant import COLUMNS_TUNGGAKAN_AM, COLUMNS_KUADRAN
 from services.kuadran_service import prepare_kuadran_data
 from utils.selector import pilih_segmen, cari_am
-
+from services.chart import prepare_total_with_forecast
+from ui.chart import plot_chart
 
 TODAY = date.today()
 render_sidebar()
@@ -30,8 +31,16 @@ st.title("❇️ Kuadran")
 segmen_target = pilih_segmen()
 filtered_df = cari_am(df_database)
 
+c1, c2 = st.columns(2)
 # METRICS
-render_dashboard_metrics(filtered_df, segmen_target)
+with c1:
+    render_dashboard_metrics(filtered_df, segmen_target)
+with c2:
+    df_chart = prepare_total_with_forecast(
+        filter_collection_data(filtered_df, segmen_target)
+    )
+
+    plot_chart(df_chart)
 
 # KUADRAN & SUMMARY
 tab_kuadran, tab_summary = st.tabs(["Kuadran", "Summary"])
