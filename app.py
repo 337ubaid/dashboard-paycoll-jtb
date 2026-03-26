@@ -4,11 +4,14 @@ from ui.layout import render_sidebar, print_sort_dataframe
 from ui.metrics import render_dashboard_metrics
 from utils.selector import pilih_segmen
 from services.filters import filter_collection_data
-from core.constant import TODAY
+from services.chart import prepare_total_with_forecast
+from ui.chart import plot_chart
+
 
 render_sidebar()
 df_nonpots = load_database_nonpots()
 LATEST_DATE = df_nonpots["tanggal"].max()
+
 
 # ====== Konfigurasi Page ======
 st.set_page_config(
@@ -21,6 +24,16 @@ segmen_target = pilih_segmen()
 
 # METRIC
 render_dashboard_metrics(df_nonpots, segmen_target)
+
+# Grafik
+st.subheader("Grafik")
+c1, c2 = st.columns(2)
+with c1:
+    df_chart = prepare_total_with_forecast(
+        filter_collection_data(df_nonpots, segmen_target)
+    )
+
+    plot_chart(df_chart)
 # SHOW ALL DATA
 df_nonpots = filter_collection_data(df_nonpots, segmen_target, tanggal=LATEST_DATE)
 print_sort_dataframe(df_nonpots)

@@ -36,3 +36,8 @@ COLUMNS_TUNGGAKAN_AM = [
     "lama_tunggakan",
     "kuadran",
 ]
+
+HARI_LIBUR = [
+    ("2026-03-18", "2026-03-24", "Libur Nasional"),
+    ("2026-04-03", "2026-04-05", "Libur Nasional"),
+]
