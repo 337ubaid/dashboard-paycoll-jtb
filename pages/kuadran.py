@@ -23,7 +23,7 @@ latest_date = df_database["tanggal"].max()
 st.set_page_config(
     page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
 )
-st.title("❇️ Tunggakan AM")
+st.title("❇️ Kuadran")
 # ==============================
 
 # FILTERING
@@ -31,12 +31,12 @@ segmen_target = pilih_segmen()
 filtered_df = cari_am(df_database)
 
 # METRICS
-render_dashboard_metrics(filtered_df)
+render_dashboard_metrics(filtered_df, segmen_target)
 
 # KUADRAN & SUMMARY
 tab_kuadran, tab_summary = st.tabs(["Kuadran", "Summary"])
-
 filtered_df = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
+
 
 with tab_kuadran:
     df_kuadran, total_pelanggan, total_saldo = prepare_kuadran_data(
