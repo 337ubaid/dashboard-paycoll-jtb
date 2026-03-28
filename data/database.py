@@ -1,7 +1,7 @@
 import streamlit as st
 
-from data.spreadsheet import read_worksheet
 from core.config import SPREADSHEET_ID, WORKSHEET
+from data.spreadsheet import read_worksheet
 from utils.parser import parse_dataframe
 
 

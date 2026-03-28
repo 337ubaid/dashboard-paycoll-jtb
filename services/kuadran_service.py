@@ -1,4 +1,5 @@
 import numpy as np
+
 from core.rule import BATAS_KUADRAN
 from services.filters import filter_collection_data
 
@@ -51,6 +52,7 @@ def prepare_kuadran_utip(df, columns):
 
 import numpy as np
 import pandas as pd
+
 from core.rule import BATAS_KUADRAN
 
 

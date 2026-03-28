@@ -1,6 +1,6 @@
 import pandas as pd
-from core.schema import SCHEMA_MAP
 
+from core.schema import SCHEMA_MAP
 
 # def parse_date_column(df, df_type, date_format="%d/%m/%Y"):
 

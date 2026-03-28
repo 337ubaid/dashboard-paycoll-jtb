@@ -1,19 +1,21 @@
+from datetime import date
+
 import streamlit as st
+
+from core.constant import COLUMNS_KUADRAN, COLUMNS_TUNGGAKAN_AM
+from data.database import load_database_nonpots
+from services.chart import prepare_total_with_forecast
+from services.filters import filter_collection_data
+from services.kuadran_service import prepare_kuadran_data
+from ui.chart import plot_chart
 from ui.layout import (
-    render_sidebar,
-    render_dataframe,
     print_sort_dataframe,
     render_all_kuadran,
+    render_dataframe,
+    render_sidebar,
 )
-from data.database import load_database_nonpots
-from services.filters import filter_collection_data
 from ui.metrics import render_dashboard_metrics
-from datetime import date
-from core.constant import COLUMNS_TUNGGAKAN_AM, COLUMNS_KUADRAN
-from services.kuadran_service import prepare_kuadran_data
-from utils.selector import pilih_segmen, cari_am
-from services.chart import prepare_total_with_forecast
-from ui.chart import plot_chart
+from utils.selector import cari_am, pilih_segmen
 
 TODAY = date.today()
 render_sidebar()

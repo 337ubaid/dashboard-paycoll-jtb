@@ -1,4 +1,5 @@
 import streamlit as st
+
 from utils.formatter import format_currency, format_headers
 
 
@@ -37,8 +38,8 @@ def render_dataframe(df):
     st.dataframe(df, column_config=header_map)
 
 
-from utils.formatter import format_skala_rupiah
 from core.rule import KUADRAN_INFO
+from utils.formatter import format_skala_rupiah
 
 
 def render_all_kuadran(df, total_pelanggan, total_saldo):

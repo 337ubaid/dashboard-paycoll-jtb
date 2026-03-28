@@ -1,13 +1,14 @@
 import streamlit as st
-from ui.layout import render_sidebar
+
 from core.config import WORKSHEETS_NONPOTS
-from data.spreadsheet import upsert_rows_mybrains
 from data.excel import load_mybrains_excel
+from data.spreadsheet import upsert_rows_mybrains
+from modules.transform import add_metadata, assign_kuadran, compute_lama_tunggakan
+from ui.layout import render_sidebar
 from utils.dataframe_utils import normalize_columns
 from utils.schema import REQUIRED_COLUMNS_MYBRAINS
 from utils.selector import pilih_segmen
 from utils.validator import format_currency
-from modules.transform import add_metadata, compute_lama_tunggakan, assign_kuadran
 
 render_sidebar()
 # ====== Konfigurasi PAge ======

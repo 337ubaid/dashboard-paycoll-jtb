@@ -1,12 +1,12 @@
 import streamlit as st
+
 from data.database import load_database_nonpots
-from ui.layout import render_sidebar, print_sort_dataframe
+from services.chart import prepare_total_with_forecast
+from services.filters import filter_collection_data
+from ui.chart import plot_chart
+from ui.layout import print_sort_dataframe, render_sidebar
 from ui.metrics import render_dashboard_metrics
 from utils.selector import pilih_segmen
-from services.filters import filter_collection_data
-from services.chart import prepare_total_with_forecast
-from ui.chart import plot_chart
-
 
 render_sidebar()
 df_nonpots = load_database_nonpots()

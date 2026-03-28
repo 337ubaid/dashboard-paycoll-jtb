@@ -1,8 +1,9 @@
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+
 from core.constant import HARI_LIBUR
 from utils.formatter import format_skala_rupiah
-import pandas as pd
 
 
 def plot_chart(df, date_col="tanggal", value_col="saldo_akhir"):

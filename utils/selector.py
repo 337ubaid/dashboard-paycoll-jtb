@@ -1,5 +1,7 @@
-import streamlit as st
 from datetime import datetime
+
+import streamlit as st
+
 from utils.schema import SEGMEN
 
 
