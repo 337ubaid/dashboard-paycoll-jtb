@@ -18,4 +18,6 @@ COLUMN_TYPES_MYBRAIN = {
     "13-24_bln": int,
     ">_24_bln": int,
 }
-SEGMEN = ["-Semua-", "DGS", "DPS", "DSS", "RBS", "UNIDENTIFIED"]
+
+SEGMEN_ONLY = ["DGS", "DPS", "DSS", "RBS"]
+SEGMEN = ["-Semua-"] + SEGMEN_ONLY + ["UNIDENTIFIED"]

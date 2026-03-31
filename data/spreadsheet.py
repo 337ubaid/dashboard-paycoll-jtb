@@ -2,6 +2,7 @@ import gspread
 import pandas as pd
 import streamlit as st
 from google.oauth2.service_account import Credentials
+
 from core.config import GCP_SERVICE_ACCOUNT, SCOPE, SPREADSHEET_ID
 
 
@@ -30,7 +31,16 @@ def read_worksheet(spreadsheet_key, worksheet_name):
     return pd.DataFrame(data)
 
 
-def upsert_rows_mybrains(df_new, worksheet_name):
+import time
+
+
+def upsert_rows_mybrains(df_new, worksheet_name, segmen, tanggal):
+    """
+    1. get worksheet data
+    2. kalau ada data yg sama (segmen, tanggal) -> hapus
+    3. upload data
+
+    """
 
     df_new["idnumber"] = pd.to_numeric(df_new["idnumber"], errors="coerce").astype(
         "Int64"
@@ -49,8 +59,12 @@ def upsert_rows_mybrains(df_new, worksheet_name):
             subset=["tanggal", "segmen", "idnumber"], keep="last"
         )
 
-    worksheet.clear()
-    worksheet.update([df_final.columns.tolist()] + df_final.values.tolist())
+    with st.spinner("Waiting..."):
+        time.sleep(5)
+    # st.write(df_existing)
+    # confirm_update_database(df_new, tanggal, segmen)
+    # worksheet.clear()
+    # worksheet.update([df_final.columns.tolist()] + df_final.values.tolist())
 
 
 def save_new_kuadran(df: pd.DataFrame):

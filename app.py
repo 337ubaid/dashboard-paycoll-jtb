@@ -1,12 +1,12 @@
 import streamlit as st
-from data.database import load_database_nonpots
-from ui.layout import render_sidebar, print_sort_dataframe
-from ui.metrics import render_dashboard_metrics
-from utils.selector import pilih_segmen
-from services.filters import filter_collection_data
-from services.chart import prepare_total_with_forecast
-from ui.chart import plot_chart
 
+from data.database import load_database_nonpots
+from services.chart import prepare_total_with_forecast
+from services.filters import filter_collection_data
+from ui.chart import plot_chart
+from ui.layout import print_sort_dataframe, render_sidebar
+from ui.metrics import render_dashboard_metrics
+from utils.selector import pilih_all_segmen
 
 render_sidebar()
 df_nonpots = load_database_nonpots()
@@ -20,7 +20,7 @@ st.set_page_config(
 st.title("📈 Dashboard Data Collection Jatim Barat")
 # ==============================
 
-segmen_target = pilih_segmen()
+segmen_target = pilih_all_segmen()
 
 # METRIC
 render_dashboard_metrics(df_nonpots, segmen_target)

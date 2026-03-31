@@ -1,5 +1,6 @@
 import streamlit as st
-from ui.layout import render_sidebar, render_dataframe, render_kuadran_utip
+
+from ui.layout import render_dataframe, render_kuadran_utip, render_sidebar
 
 render_sidebar()
 
@@ -11,11 +12,11 @@ st.title("❇️ UTIP")
 
 
 from data.database import load_database_utip
-from utils.selector import pilih_segmen
 from services.filters import filter_utip_data
+from utils.selector import pilih_all_segmen
 
 df_db_utip = load_database_utip()
-segmen_target = pilih_segmen()
+segmen_target = pilih_all_segmen()
 
 df_db_utip = filter_utip_data(df_db_utip, segmen_target)
 

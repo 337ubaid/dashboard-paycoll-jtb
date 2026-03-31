@@ -1,13 +1,13 @@
 import streamlit as st
-from ui.layout import render_sidebar
+
 from core.config import WORKSHEETS_NONPOTS
+from core.constant import TODAY
 from data.spreadsheet import upsert_rows_mybrains
-from data.excel import load_mybrains_excel
-from utils.dataframe_utils import normalize_columns
-from utils.schema import REQUIRED_COLUMNS_MYBRAINS
+from ui.dialog import confirm_dialog
+from ui.layout import print_sort_dataframe, render_sidebar
+from utils.dataframe_utils import convert_excel_mybrains_nonpots, create_empty_df
 from utils.selector import pilih_segmen
 from utils.validator import format_currency
-from modules.transform import add_metadata, compute_lama_tunggakan, assign_kuadran
 
 render_sidebar()
 # ====== Konfigurasi PAge ======
@@ -16,42 +16,69 @@ st.set_page_config(
 )
 st.title("📈 Update MyBrains NonPots")
 
-col1, col2 = st.columns(2)
 
-with col2:
-    segmen_target = pilih_segmen()
-    tanggal = st.date_input("Bill Periode", value="today")
+# Init Session
+if "uploader_key" not in st.session_state:
+    st.session_state["uploader_key"] = 1
+if "tanggal" not in st.session_state:
+    st.session_state.tanggal = TODAY
+if "segmen" not in st.session_state:
+    st.session_state.segmen = None
+
+# Columns Show
+col_selector, col_dataframe = st.columns(2)
+
+with col_selector:
+    segmen_target = pilih_segmen(key="segmen")
+    tanggal = st.date_input("Bill Periode", key="tanggal")
     tanggal = tanggal.strftime("%d/%m/%Y")
+    file = st.file_uploader(
+        "Upload file",
+        type=["xls"],
+        key=st.session_state["uploader_key"],
+    )
 
-with col1:
-    file = st.file_uploader("Upload file", type=["xls"], key="upload_file")
-    if file:
+    if file and segmen_target:
+        df_upload = convert_excel_mybrains_nonpots(file, segmen_target, tanggal)
+        st.session_state.df_upload = df_upload
+        st.info(
+            f"Terdapat **{len(df_upload)}** baris data untuk segmen **{segmen_target}**"
+        )
 
+with col_dataframe:
+    if file and segmen_target and tanggal:
         try:
-            df = load_mybrains_excel(file)
-            df = normalize_columns(df)
-            df = df[REQUIRED_COLUMNS_MYBRAINS].copy()
-
-            # tambahkan kolom pendukung(segmen, tanggal, kuadran)
-            df = add_metadata(df, segmen_target, tanggal)
-            df = compute_lama_tunggakan(df)
-            df = assign_kuadran(df)
-            st.dataframe(format_currency(df))
+            print_sort_dataframe(df_upload)
 
         except Exception as e:
             st.error(str(e))
 
+    else:
+        st.dataframe(create_empty_df())
 
-if st.button("Upload ke Database", type="primary"):
 
-    upsert_rows_mybrains(df, WORKSHEETS_NONPOTS["collection"])
-    st.cache_data.clear()
-    # if "upload_file" in st.session_state:
-    #     del st.session_state["upload_file"]
-    # if "segmen_input" in st.session_state:
-    #     del st.session_state["segmen_input"]
+is_valid = st.session_state.segmen is not None and file is not None
 
-    st.success("Data berhasil diupload")
 
-    # st.switch_page("pages/kuadran.py")
-    # st.switch_page("pages/update_mybrains_nonpots.py")
+# TODO : buat modular biar clean
+def clear_form():
+    st.session_state["uploader_key"] += 1
+    st.session_state.tanggal = TODAY
+    st.session_state.segmen = None
+
+
+def handle_upload():
+    df_upload = st.session_state.get("df_upload")
+    upsert_rows_mybrains(
+        df_upload, WORKSHEETS_NONPOTS["collection"], segmen_target, tanggal
+    )
+    clear_form()
+
+
+if st.button(
+    "Upload ke Database",
+    type="primary",
+    disabled=not is_valid,
+):
+    st.session_state.show_confirm = True
+    confirm_dialog(on_confirm=handle_upload)

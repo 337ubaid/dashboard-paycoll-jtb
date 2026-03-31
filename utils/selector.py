@@ -1,12 +1,18 @@
-import streamlit as st
 from datetime import datetime
-from utils.schema import SEGMEN
+
+import streamlit as st
+
+from utils.schema import SEGMEN, SEGMEN_ONLY
 
 
-def pilih_segmen():
-    # Pilihan segmen
-    segmen_target = st.selectbox("Pilih Segmen", SEGMEN, key="segmen_input")
-    return segmen_target
+def pilih_all_segmen(key="segmen"):
+
+    return st.selectbox("Pilih Segmen", SEGMEN, key=key)
+
+
+def pilih_segmen(key="segmen"):
+
+    return st.selectbox("Pilih Segmen", SEGMEN_ONLY, key=key)
 
 
 def cari_am(df):
