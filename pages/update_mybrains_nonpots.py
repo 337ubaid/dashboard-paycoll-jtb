@@ -2,8 +2,7 @@ import streamlit as st
 
 from core.config import WORKSHEETS_NONPOTS
 from core.constant import TODAY
-from data.spreadsheet import upsert_rows_mybrains
-from ui.dialog import confirm_dialog
+from ui.dialog import confirm_dialog, upsert_rows_mybrains
 from ui.layout import print_sort_dataframe, render_sidebar
 from utils.dataframe_utils import convert_excel_mybrains_nonpots, create_empty_df
 from utils.selector import pilih_segmen

@@ -1,3 +1,5 @@
+import time
+
 import gspread
 import pandas as pd
 import streamlit as st
@@ -31,40 +33,49 @@ def read_worksheet(spreadsheet_key, worksheet_name):
     return pd.DataFrame(data)
 
 
-import time
-
-
-def upsert_rows_mybrains(df_new, worksheet_name, segmen, tanggal):
-    """
-    1. get worksheet data
-    2. kalau ada data yg sama (segmen, tanggal) -> hapus
-    3. upload data
-
-    """
-
+def upsert_mybrains_rows_logic(df_new, worksheet, df_existing, segmen, tanggal):
+    df_new = df_new.copy()
     df_new["idnumber"] = pd.to_numeric(df_new["idnumber"], errors="coerce").astype(
         "Int64"
     )
-    worksheet = get_worksheet_object(SPREADSHEET_ID["nonpots"], worksheet_name)
-
-    df_existing = read_worksheet(SPREADSHEET_ID["nonpots"], worksheet_name)
 
     if df_existing.empty:
-        df_final = df_new
+        worksheet.update([df_new.columns.tolist()] + df_new.values.tolist())
+        return {"deleted": 0, "appended": len(df_new), "mode": "init"}
 
-    else:
-        df_final = pd.concat([df_existing, df_new], ignore_index=True)
+    df_existing = df_existing.reset_index(drop=True)
 
-        df_final = df_final.drop_duplicates(
-            subset=["tanggal", "segmen", "idnumber"], keep="last"
-        )
+    df_existing["tanggal"] = df_existing["tanggal"].astype(str)
+    tanggal = str(tanggal)
 
-    with st.spinner("Waiting..."):
-        time.sleep(5)
-    # st.write(df_existing)
-    # confirm_update_database(df_new, tanggal, segmen)
-    # worksheet.clear()
-    # worksheet.update([df_final.columns.tolist()] + df_final.values.tolist())
+    mask = (df_existing["tanggal"] == tanggal) & (df_existing["segmen"] == segmen)
+
+    rows_to_delete = df_existing[mask].index.tolist()
+
+    deleted_count = 0
+
+    if rows_to_delete:
+        rows_to_delete = sorted([i + 2 for i in rows_to_delete])
+
+        start = min(rows_to_delete)
+        end = max(rows_to_delete)
+
+        is_contiguous = rows_to_delete == list(range(start, end + 1))
+
+        if is_contiguous:
+            worksheet.delete_rows(start, end)
+            deleted_count = len(rows_to_delete)
+        else:
+            for row_idx in reversed(rows_to_delete):
+                worksheet.delete_rows(row_idx)
+            deleted_count = len(rows_to_delete)
+
+    worksheet.append_rows(
+        df_new.values.tolist(),
+        value_input_option="USER_ENTERED",
+    )
+
+    return {"deleted": deleted_count, "appended": len(df_new), "mode": "upsert"}
 
 
 def save_new_kuadran(df: pd.DataFrame):
