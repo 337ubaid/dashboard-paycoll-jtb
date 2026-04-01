@@ -1,7 +1,7 @@
 import streamlit as st
 
-from data.spreadsheet import read_worksheet
 from core.config import SPREADSHEET_ID, WORKSHEET
+from data.spreadsheet import read_worksheet
 from utils.parser import parse_dataframe
 
 
@@ -21,6 +21,7 @@ def load_database_utip():
     return df
 
 
+@st.cache_data(ttl=600)
 def load_database(spreadsheet_key, database_name):
     df = read_worksheet(spreadsheet_key, WORKSHEET[database_name])
     df = parse_dataframe(df, database_name)

@@ -1,4 +1,5 @@
 import streamlit as st
+
 from services.metrics_service import calculate_dashboard_metrics
 
 
@@ -14,8 +15,8 @@ def render_dashboard_metrics(df, segmen="-Semua-"):
 
         st.metric(
             "Saldo Awal Bulan Ini",
-            f"{saldo['day6']:,.0f}",
-            f"{saldo['delta_day6']:,.0f}",
+            f"{saldo['start_periode']:,.0f}",
+            f"{saldo['delta_start_periode']:,.0f}",
             delta_color="inverse",
         )
 
@@ -30,8 +31,8 @@ def render_dashboard_metrics(df, segmen="-Semua-"):
 
         st.metric(
             "Pelanggan Awal Bulan Ini",
-            f"{pelanggan['day6']:,.0f}",
-            f"{pelanggan['delta_day6']:,.0f}",
+            f"{pelanggan['start_periode']:,.0f}",
+            f"{pelanggan['delta_start_periode']:,.0f}",
             delta_color="inverse",
         )
 
