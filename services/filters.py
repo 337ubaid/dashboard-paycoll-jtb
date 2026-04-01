@@ -1,3 +1,5 @@
+import streamlit as st
+
 from utils.dataframe_utils import reset_index
 
 
@@ -5,7 +7,7 @@ def filter_collection_data(df, segmen, kuadran=None, tanggal=None):
 
     df = df[(df["saldo_akhir"] > 0) | (df["kuadran"] != 0)]
 
-    if segmen != "-Semua-":
+    if segmen != "-Semua-" or segmen is None:
         df = df[df["segmen"] == segmen]
 
     if kuadran is not None:
