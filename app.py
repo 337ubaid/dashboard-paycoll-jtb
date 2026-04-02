@@ -28,12 +28,12 @@ render_dashboard_metrics(df_nonpots, segmen_target)
 # Grafik
 st.subheader("Tren Saldo Harian")
 c1, c2 = st.columns(2)
-# with c1:
-#     df_chart = prepare_total_with_forecast(
-#         filter_collection_data(df_nonpots, segmen_target)
-#     )
+with c1:
+    df_chart = prepare_total_with_forecast(
+        filter_collection_data(df_nonpots, segmen_target)
+    )
 
-#     plot_chart(df_chart)
+    plot_chart(df_chart)
 # SHOW ALL DATA
 df_nonpots = filter_collection_data(df_nonpots, segmen_target, tanggal=LATEST_DATE)
 print_sort_dataframe(df_nonpots)

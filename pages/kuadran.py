@@ -67,4 +67,6 @@ tabs = st.tabs(tab_names)
 
 for i, tab in enumerate(tabs, start=1):
     with tab:
-        print_sort_dataframe(filtered_df[filtered_df["kuadran"] == i])
+        df_kuadran = filtered_df[filtered_df["kuadran"] == i]
+        st.info(f"{len(df_kuadran)} Pelanggan")
+        print_sort_dataframe(df_kuadran)

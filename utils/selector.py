@@ -2,7 +2,7 @@ from datetime import datetime
 
 import streamlit as st
 
-from utils.schema import SEGMEN, SEGMEN_ONLY
+from core.schema import SEGMEN, SEGMEN_ONLY
 
 
 def pilih_all_segmen(key="segmen"):

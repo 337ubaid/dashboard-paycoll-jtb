@@ -28,3 +28,8 @@ def filter_utip_data(df, segmen):
     # reset_index(df)
 
     return df
+
+
+def filter_column(df, column):
+    df = df[(df["saldo_akhir"] > 0) | (df["kuadran"] != 0)]
+    pass
