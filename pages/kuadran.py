@@ -15,7 +15,7 @@ from ui.layout import (
     render_sidebar,
 )
 from ui.metrics import render_dashboard_metrics
-from utils.selector import cari_am, pilih_all_segmen
+from utils.selector import cari_am, input_am, pilih_all_segmen
 
 TODAY = date.today()
 render_sidebar()
@@ -30,8 +30,16 @@ st.title("❇️ Kuadran")
 # ==============================
 
 # FILTERING
-segmen_target = pilih_all_segmen()
-filtered_df = cari_am(df_database)
+
+c1, c2, c3 = st.columns(3)
+with c1:
+    segmen_target = pilih_all_segmen()
+with c2:
+    nama_am = input_am()
+with c3:
+    pass
+
+filtered_df = cari_am(df_database, nama_am)
 
 c1, c2 = st.columns(2)
 # METRICS
@@ -45,7 +53,7 @@ with c2:
     plot_chart(df_chart)
 
 # KUADRAN & SUMMARY
-tab_kuadran, tab_summary = st.tabs(["Kuadran", "Summary"])
+tab_kuadran, tab_details = st.tabs(["Kuadran", "Detail"])
 filtered_df = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
 
 
@@ -55,18 +63,28 @@ with tab_kuadran:
     )
 
     render_all_kuadran(df_kuadran, total_pelanggan, total_saldo)
-with tab_summary:
-    print_sort_dataframe(filtered_df[COLUMNS_TUNGGAKAN_AM])
+with tab_details:
+    # DETAIL KUADRAN
+    st.subheader("Detail Kuadran")
+    # print_sort_dataframe(filtered_df[COLUMNS_TUNGGAKAN_AM])
 
-# DETAIL KUADRAN
+    tab_names = ["ALL", "Kuadran 1", "Kuadran 2", "Kuadran 3", "Kuadran 4"]
+    tabs = st.tabs(tab_names)
+
+    for i, tab in enumerate(tabs):
+        with tab:
+            if i == 0:
+                df_show = filtered_df
+            else:
+                df_show = filtered_df[filtered_df["kuadran"] == i]
+            st.info(f"{len(df_show)} Pelanggan")
+            print_sort_dataframe(df_show)
+
+# UTIP
 st.divider()
-st.subheader("Detail Kuadran")
+st.subheader("UTIP")
+from data.database import load_database_utip
 
-tab_names = ["Kuadran 1", "Kuadran 2", "Kuadran 3", "Kuadran 4"]
-tabs = st.tabs(tab_names)
-
-for i, tab in enumerate(tabs, start=1):
-    with tab:
-        df_kuadran = filtered_df[filtered_df["kuadran"] == i]
-        st.info(f"{len(df_kuadran)} Pelanggan")
-        print_sort_dataframe(df_kuadran)
+df_db_utip = load_database_utip()
+filtered_df_utip = cari_am(df_db_utip, nama_am)
+st.dataframe(filtered_df_utip)

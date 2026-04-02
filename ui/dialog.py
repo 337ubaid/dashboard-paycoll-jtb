@@ -16,6 +16,7 @@ def confirm_dialog(on_confirm, on_cancel=None):
         if st.button("✅ Ya, Upload Sekarang", use_container_width=True):
             on_confirm()
             st.session_state.show_confirm = False
+            st.cache_data.clear()
             st.rerun()
 
         if st.button("❌ Batal", use_container_width=True):

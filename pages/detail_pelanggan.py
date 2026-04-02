@@ -14,5 +14,5 @@ latest_date = df_database["tanggal"].max()
 st.set_page_config(
     page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
 )
-st.title("❇️ Detail Pelanggan")
+st.title("🧩 Detail Pelanggan")
 # ==============================

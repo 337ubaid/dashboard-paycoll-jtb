@@ -15,10 +15,12 @@ def pilih_segmen(key="segmen"):
     return st.selectbox("Pilih Segmen", SEGMEN_ONLY, key=key)
 
 
-def cari_am(df):
-    nama_am = st.text_input("Nama AM", "")
-    if nama_am:
-        filtered_df = df[df["nama_am"].str.contains(nama_am, case=False, na=False)]
-    else:
-        filtered_df = df
-    return filtered_df
+def cari_am(df, nama_am):
+    if not nama_am:
+        return df
+
+    return df[df["nama_am"].str.contains(nama_am, case=False, na=False)]
+
+
+def input_am():
+    return st.text_input("Nama AM", "")

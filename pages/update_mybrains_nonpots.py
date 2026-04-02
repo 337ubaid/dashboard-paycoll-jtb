@@ -13,7 +13,7 @@ render_sidebar()
 st.set_page_config(
     page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
 )
-st.title("📈 Update MyBrains NonPots")
+st.title("🧠 Update MyBrains NonPots")
 
 
 # Init Session
