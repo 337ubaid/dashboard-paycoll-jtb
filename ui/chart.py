@@ -1,8 +1,9 @@
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+
 from core.constant import HARI_LIBUR
 from utils.formatter import format_skala_rupiah
-import pandas as pd
 
 
 def plot_chart(df, date_col="tanggal", value_col="saldo_akhir"):
@@ -73,5 +74,20 @@ def plot_chart(df, date_col="tanggal", value_col="saldo_akhir"):
             annotation_text=label,
             annotation_position="top left",
         )
+    # add_weekly_lines(fig, df, date_col)
 
     st.plotly_chart(fig, use_container_width=True)
+
+
+def add_weekly_lines(fig, df, date_col):
+    start = df[date_col].min()
+    end = df[date_col].max()
+
+    for d in pd.date_range(start=start, end=end, freq="W-MON"):
+        fig.add_vline(
+            x=d,
+            line=dict(
+                dash="dot",
+                width=1,
+            ),
+        )

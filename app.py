@@ -21,7 +21,8 @@ st.title("📈 Dashboard Data Collection Jatim Barat")
 # ==============================
 
 segmen_target = pilih_all_segmen()
-
+if segmen_target is None:
+    segmen_target = "-Semua-"
 # METRIC
 render_dashboard_metrics(df_nonpots, segmen_target)
 
