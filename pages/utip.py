@@ -50,7 +50,7 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Distribusi Keterangan UTIP")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 with col2:
     st.subheader("Tunggakan tiap AM")
     st.dataframe(
@@ -60,7 +60,7 @@ with col2:
             for col in pivot.columns
             if col != "AM"
         },
-        use_container_width=True,
+        width="stretch",
     )
 
 

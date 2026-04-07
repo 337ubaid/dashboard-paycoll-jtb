@@ -76,7 +76,7 @@ def plot_chart(df, date_col="tanggal", value_col="saldo_akhir"):
         )
     # add_weekly_lines(fig, df, date_col)
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def add_weekly_lines(fig, df, date_col):

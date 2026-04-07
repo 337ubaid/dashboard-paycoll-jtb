@@ -1,4 +1,4 @@
-def normalize_columns(df):
+def normalize_columns_name(df):
     df = df.copy()
 
     df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
@@ -6,8 +6,12 @@ def normalize_columns(df):
     return df
 
 
+def sort_values(df, sort_column="saldo_akhir"):
+    df = df.sort_values(sort_column, ascending=False)
+    return df
+
+
 def reset_index(df):
-    df = df.sort_values("saldo_akhir", ascending=False)
 
     df = df.reset_index(drop=True)
 
@@ -20,13 +24,13 @@ import pandas as pd
 from core.schema import REQUIRED_COLUMNS_MYBRAINS, SCHEMA_DATABASE_NONPOTS
 from data.excel import load_mybrains_excel
 from modules.transform import add_metadata, assign_kuadran, compute_lama_tunggakan
-from utils.dataframe_utils import normalize_columns
+from utils.dataframe_utils import normalize_columns_name
 
 
 def convert_excel_mybrains_nonpots(file, segmen_target, tanggal):
 
     df = load_mybrains_excel(file)
-    df = normalize_columns(df)
+    df = normalize_columns_name(df)
     df = df.reindex(columns=REQUIRED_COLUMNS_MYBRAINS.keys()).copy()
 
     # tambahkan kolom pendukung(segmen, tanggal, kuadran)
