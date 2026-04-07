@@ -13,13 +13,13 @@ def confirm_dialog(on_confirm, on_cancel=None):
     if st.session_state.get("show_confirm", False):
         st.warning("Apakah Anda yakin ingin melanjutkan?")
 
-        if st.button("✅ Ya, Upload Sekarang", use_container_width=True):
+        if st.button("✅ Ya, Upload Sekarang", width="stretch"):
             on_confirm()
             st.session_state.show_confirm = False
             st.cache_data.clear()
             st.rerun()
 
-        if st.button("❌ Batal", use_container_width=True):
+        if st.button("❌ Batal", width="stretch"):
             # if on_cancel:
             #     on_cancel()
             st.session_state.show_confirm = False
