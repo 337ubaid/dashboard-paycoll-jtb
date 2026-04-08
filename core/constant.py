@@ -15,7 +15,7 @@ COLUMNS_KUADRAN_UTIP = [
     "PAYMENT-ID",
     "SEGMEN",
     "ACCTNO",
-    "AM",
+    "nama_am",
     "SALDO AKHIR",
     "KET",
     "KET 2",

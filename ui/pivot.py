@@ -7,7 +7,7 @@ def pivot_am_keterangan(df, value_type="saldo"):
         aggfunc = "sum"
 
     pivot = df.pivot_table(
-        index="AM",
+        index="nama_am",
         columns="KET 2",
         values=value,
         aggfunc=aggfunc,

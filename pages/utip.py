@@ -19,7 +19,7 @@ df_db_utip = load_database_utip()
 segmen_target = pilih_all_segmen()
 
 df_db_utip = filter_utip_data(df_db_utip, segmen_target)
-
+# st.dataframe(df_db_utip)
 
 from ui.pie import plot_pie
 from ui.pivot import pivot_am_keterangan
@@ -58,7 +58,7 @@ with col2:
         column_config={
             col: st.column_config.NumberColumn(format="%,d")
             for col in pivot.columns
-            if col != "AM"
+            if col != "nama_am"
         },
         width="stretch",
     )
