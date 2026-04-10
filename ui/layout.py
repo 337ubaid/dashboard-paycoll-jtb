@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+
+GMT7 = timezone(timedelta(hours=7))
 
 import streamlit as st
 
@@ -62,7 +64,7 @@ def _render_sync_section():
     if st.button("🔄 Sync", type="secondary", use_container_width=True):
         st.cache_data.clear()
         st.cache_resource.clear()
-        st.session_state.last_sync = datetime.now().strftime("%d/%m/%Y - %H:%M")
+        st.session_state.last_sync = datetime.now(GMT7).strftime("%d/%m/%Y - %H:%M")
         st.success("Data telah disinkronkan!")
         st.rerun()
 
