@@ -23,7 +23,8 @@ import pandas as pd
 
 from core.schema import REQUIRED_COLUMNS_MYBRAINS, SCHEMA_DATABASE_NONPOTS
 from data.excel import load_mybrains_excel
-from modules.transform import add_metadata, assign_kuadran, compute_lama_tunggakan
+from services.aging_service import compute_lama_tunggakan
+from services.kuadran_service import assign_kuadran
 from utils.dataframe_utils import normalize_columns_name
 
 
@@ -45,4 +46,14 @@ def create_empty_df():
     cols = SCHEMA_DATABASE_NONPOTS.keys()
 
     df = pd.DataFrame([{col: "" for col in cols}] * 11)
+    return df
+
+
+def add_metadata(df, segmen, tanggal):
+
+    df = df.copy()
+
+    df["segmen"] = segmen
+    df["tanggal"] = tanggal
+
     return df
