@@ -8,12 +8,8 @@ from services.chart import prepare_total_with_forecast
 from services.filters import filter_collection_data
 from services.kuadran_service import prepare_kuadran_data
 from ui.chart import plot_chart
-from ui.layout import (
-    print_sort_dataframe,
-    render_all_kuadran,
-    render_dataframe,
-    render_sidebar,
-)
+from ui.kuadran import render_all_kuadran
+from ui.layout import print_sort_dataframe, render_sidebar
 from ui.metrics import render_dashboard_metrics
 from utils.selector import cari_am, input_am, pilih_all_segmen
 

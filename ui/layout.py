@@ -1,53 +1,75 @@
+from datetime import datetime
+
 import streamlit as st
 
 from utils.formatter import format_currency, format_headers
 
+PAGES = [
+    {
+        "page": "app.py",
+        "label": "Home",
+        "icon": ":material/home:",
+    },
+    {
+        "page": "pages/update_mybrains_nonpots.py",
+        "label": "Update Daily",
+        "icon": ":material/event_repeat:",
+    },
+    {
+        "page": "pages/kuadran.py",
+        "label": "Kuadran",
+        "icon": ":material/dataset:",
+    },
+    {
+        "page": "pages/update_batas_kuadran.py",
+        "label": "Batas Kuadran",
+        "icon": ":material/dataset:",
+    },
+    {
+        "page": "pages/utip.py",
+        "label": "UTIP",
+        "icon": ":material/money_bag:",
+    },
+]
+
 
 def render_sidebar():
-    """
-    Fungsi untuk menampilkan menu di sidebar.
-    """
+    """Render sidebar with navigation menu and sync button."""
 
     with st.sidebar:
         st.title("Menu")
-        st.page_link(
-            "app.py",
-            label="Home",
-            icon=":material/home:",
-        )
-        st.page_link(
-            "pages/update_mybrains_nonpots.py",
-            label="Update Daily",
-            icon=":material/event_repeat:",
-        )
-        st.page_link(
-            "pages/kuadran.py",
-            label="Kuadran",
-            icon=":material/dataset:",
-        )
-        st.page_link(
-            "pages/update_batas_kuadran.py",
-            label="Batas Kuadran",
-            icon=":material/dataset:",
-        )
-        st.page_link(
-            "pages/utip.py",
-            label="UTIP",
-            icon=":material/money_bag:",
-        )
-        # st.page_link(
-        #     "pages/detail_pelanggan.py",
-        #     label="Detail Pelanggan",
-        #     icon=":material/article_person:",
-        # )
-        # st.page_link(
-        #     "pages/read_pdf.py",
-        #     label="PDF",
-        #     icon=":material/dataset:",
-        # )
+
+        # Navigation
+        for p in PAGES:
+            st.page_link(p["page"], label=p["label"], icon=p["icon"])
+
+        # Sync section
+        st.divider()
+        _render_sync_section()
+
+
+def _render_sync_section():
+    """Render sync button and last sync time."""
+    # Initialize session state
+    if "last_sync" not in st.session_state:
+        st.session_state.last_sync = None
+
+    # Display last sync time
+    if st.session_state.last_sync:
+        st.caption(f"🕐 Terakhir sync: {st.session_state.last_sync}")
+
+    # Sync button
+    if st.button("🔄 Sync", type="secondary", use_container_width=True):
+        st.cache_data.clear()
+        st.cache_resource.clear()
+        st.session_state.last_sync = datetime.now().strftime("%d/%m/%Y - %H:%M")
+        st.success("Data telah disinkronkan!")
+        st.rerun()
 
 
 def print_sort_dataframe(df):
+    """Sort dataframe by saldo_akhir (descending) and display."""
+
     df = df.sort_values("saldo_akhir", ascending=False)
     df = df.reset_index(drop=True)
     df.index = df.index + 1
@@ -55,101 +77,8 @@ def print_sort_dataframe(df):
 
 
 def render_dataframe(df):
+    """Display dataframe with formatted headers and currency columns."""
+
     header_map = format_headers(df)
     df = format_currency(df)
     st.dataframe(df, column_config=header_map)
-
-
-from core.rule import KUADRAN_INFO
-from utils.formatter import format_skala_rupiah
-
-
-def render_all_kuadran(df, total_pelanggan, total_saldo):
-    c1, c2 = st.columns(2)
-    with c1:
-        render_kuadran(df, 1, total_pelanggan, total_saldo)
-    with c2:
-        render_kuadran(df, 2, total_pelanggan, total_saldo)
-
-    c3, c4 = st.columns(2)
-    with c3:
-        render_kuadran(df, 3, total_pelanggan, total_saldo)
-    with c4:
-        render_kuadran(df, 4, total_pelanggan, total_saldo)
-
-
-def render_kuadran(df, kuadran, total_pelanggan, total_saldo):
-    (
-        col1,
-        col2,
-    ) = st.columns(2)
-    with col1:
-        st.subheader(f"Kuadran {kuadran}")
-    with col2:
-        render_kuadran_legend(kuadran)
-    df_display = df[df["kuadran"] == kuadran]
-
-    total_pelanggan_k = len(df_display)
-    total_saldo_k = df_display["saldo_akhir"].sum()
-
-    persen_pelanggan = (
-        (total_pelanggan_k / total_pelanggan * 100) if total_pelanggan else 0
-    )
-    persen_saldo = (total_saldo_k / total_saldo * 100) if total_saldo else 0
-
-    saldo = format_skala_rupiah(total_saldo_k)
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.write(f"Total Pelanggan : {total_pelanggan_k} ({persen_pelanggan:.2f}%)")
-
-    with c2:
-        st.write(f"Total Saldo : {saldo} ({persen_saldo:.2f}%)")
-
-    print_sort_dataframe(df_display.head(3))
-
-
-def render_kuadran_utip(df, kuadran, total_pelanggan, total_saldo):
-    (
-        col1,
-        col2,
-    ) = st.columns(2)
-    with col1:
-        st.subheader(f"Kuadran {kuadran}")
-    with col2:
-        render_kuadran_legend(kuadran)
-    df_display = df[df["kuadran"] == kuadran]
-
-    total_pelanggan_k = len(df_display)
-    total_saldo_k = df_display["SALDO AKHIR"].sum()
-
-    persen_pelanggan = (
-        (total_pelanggan_k / total_pelanggan * 100) if total_pelanggan else 0
-    )
-    persen_saldo = (total_saldo_k / total_saldo * 100) if total_saldo else 0
-
-    saldo = format_skala_rupiah(total_saldo_k)
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.write(f"Total Pelanggan : {total_pelanggan_k} ({persen_pelanggan:.2f}%)")
-
-    with c2:
-        st.write(f"Total Saldo : {saldo} ({persen_saldo:.2f}%)")
-
-    df_display = df_display.sort_values("SALDO AKHIR", ascending=False)
-    df_display = df_display.reset_index(drop=True)
-    df_display.index = df_display.index + 1
-    render_dataframe(df_display.head(3))
-
-
-def render_kuadran_legend(kuadran):
-
-    info = KUADRAN_INFO[kuadran]
-
-    text = info["label"]
-    ui_type = info["ui"]
-
-    getattr(st, ui_type)(text)

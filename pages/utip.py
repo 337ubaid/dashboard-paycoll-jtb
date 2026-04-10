@@ -1,6 +1,6 @@
 import streamlit as st
 
-from ui.layout import render_dataframe, render_kuadran_utip, render_sidebar
+from ui.layout import render_kuadran_utip, render_sidebar
 
 render_sidebar()
 

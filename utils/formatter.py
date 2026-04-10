@@ -1,13 +1,8 @@
 from core.schema import ALL_SCHEMAS
 
 
-# def format_headers(df):
-#     df = df.copy()
-#     df.columns = df.columns.str.replace("_", " ").str.upper()
-#     return df
-
-
 def format_headers(df):
+    """Format dataframe headers to UPPERCASE and replace underscores with spaces."""
     return {c: c.replace("_", " ").upper() for c in df.columns}
 
 
@@ -26,12 +21,12 @@ def get_currency_columns(df):
     return cols
 
 
-def format_skala_rupiah(x):
-    if x >= 1_000_000_000:
-        return f"{x/1_000_000_000:.1f} M"
-    elif x >= 1_000_000:
-        return f"{x/1_000_000:.1f} Jt"
-    elif x >= 1_000:
-        return f"{x/1_000:.1f} Rb"
+def format_skala_rupiah(number):
+    if number >= 1_000_000_000:
+        return f"{number/1_000_000_000:.1f} M"
+    elif number >= 1_000_000:
+        return f"{number/1_000_000:.1f} Jt"
+    elif number >= 1_000:
+        return f"{number/1_000:.1f} Rb"
     else:
-        return f"{x:.0f}"
+        return f"{number:.0f}"
