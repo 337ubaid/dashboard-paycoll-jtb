@@ -9,11 +9,12 @@ SPREADSHEET_ID = {
 WORKSHEETS_NONPOTS = {
     "collection": "DATABASE",
     "pelanggan": "DATA_PELANGGAN",
+    "keterangan": "DATA_KETERANGAN",
 }
 
 WORKSHEETS_UTIP = {"utip": "UTIP MARET"}
 
-WORKSHEET = {
+WORKSHEETS = {
     **WORKSHEETS_NONPOTS,
     **WORKSHEETS_UTIP,
 }

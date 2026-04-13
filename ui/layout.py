@@ -77,6 +77,7 @@ def print_sort_dataframe(df):
     df = df.reset_index(drop=True)
     df.index = df.index + 1
     render_dataframe(df)
+    # render_editable_keterangan(df)
 
 
 def render_dataframe(df):
@@ -85,3 +86,28 @@ def render_dataframe(df):
     header_map = format_headers(df)
     df = format_currency(df)
     st.dataframe(df, column_config=header_map)
+
+
+def render_editable_keterangan(df, key_suffix=""):
+    """Display dataframe with only 'keterangan' column editable."""
+
+    df = df.sort_values("saldo_akhir", ascending=False)
+    df = df.reset_index(drop=True)
+    df.index = df.index + 1
+
+    header_map = format_headers(df)
+    df = format_currency(df)
+
+    # column_config = header_map.copy()
+    # for col in df.columns:
+    #     if col != "keterangan":
+    #         column_config[col].disabled = True
+
+    edited_df = st.data_editor(
+        df,
+        # column_config=column_config,
+        key=f"editor_keterangan_{key_suffix}",
+        width="stretch",
+    )
+
+    return edited_df

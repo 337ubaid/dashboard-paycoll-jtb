@@ -19,6 +19,12 @@ SCHEMA_DATABASE_PELANGGAN = {
     "segmen_2": "str",
 }
 
+SCHEMA_DATABASE_KETERANGAN = {
+    "idnumber": "int",
+    "keterangan": "str",
+    "last_update_ket": "date",
+}
+
 SCHEMA_DATABASE_NONPOTS = {
     **REQUIRED_COLUMNS_MYBRAINS,
     "segmen": "str",
@@ -26,6 +32,7 @@ SCHEMA_DATABASE_NONPOTS = {
     "lama_tunggakan": "int",
     "kuadran": "int",
     "billperiode": "int",
+    **SCHEMA_DATABASE_KETERANGAN,
 }
 
 SCHEMA_DATABASE_UTIP = {
@@ -67,6 +74,7 @@ SCHEMA_DATABASE_UTIP = {
 SCHEMA_MAP = {
     "collection": SCHEMA_DATABASE_NONPOTS,
     "pelanggan": SCHEMA_DATABASE_PELANGGAN,
+    "keterangan": SCHEMA_DATABASE_KETERANGAN,
     "utip": SCHEMA_DATABASE_UTIP,
 }
 
