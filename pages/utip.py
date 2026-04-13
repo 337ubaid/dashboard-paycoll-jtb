@@ -1,15 +1,11 @@
 import streamlit as st
 
 from ui.kuadran import render_kuadran_utip
-from ui.layout import render_sidebar
-
-render_sidebar()
+from ui.layout import setup_page
 
 # ====== Konfigurasi PAge ======
-st.set_page_config(
-    page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
-)
-st.title("❇️ UTIP")
+setup_page("UTIP", "❇️")
+# ==============================
 
 
 from data.database import load_database_utip

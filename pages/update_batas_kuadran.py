@@ -4,16 +4,13 @@ import pandas as pd
 import streamlit as st
 
 from core.rule import BATAS_KUADRAN
-from ui.layout import render_dataframe, render_sidebar
+from ui.layout import setup_page
 
 TODAY = date.today()
 
-# ====== Konfigurasi PAge ======
-st.set_page_config(
-    page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
-)
-st.title("❇️ Update Kuadran")
-render_sidebar()
+# ====== Konfigurasi Page ======
+setup_page("Batas Kuadran", "❇️")
+# ==============================
 
 df_batas = (
     pd.DataFrame.from_dict(BATAS_KUADRAN, orient="index")

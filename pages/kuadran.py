@@ -8,20 +8,17 @@ from services.filters import filter_collection_data
 from services.kuadran_service import prepare_kuadran_data
 from ui.chart import print_chart_tren_saldo
 from ui.kuadran import render_all_kuadran
-from ui.layout import print_sort_dataframe, render_sidebar
+from ui.layout import print_sort_dataframe, setup_page
 from ui.metrics import render_dashboard_metrics
 from utils.selector import cari_am, input_am, pilih_all_segmen
 
 TODAY = date.today()
-render_sidebar()
+
 df_database = load_database_nonpots()
 latest_date = df_database["tanggal"].max()
 
 # ====== Konfigurasi Page ======
-st.set_page_config(
-    page_title="Dashboard Data Collection Jatim Barat", layout="wide", page_icon="📈"
-)
-st.title("❇️ Kuadran")
+setup_page("Kuadran", "❇️")
 # ==============================
 
 # FILTERING

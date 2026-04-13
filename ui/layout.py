@@ -34,7 +34,25 @@ PAGES = [
 ]
 
 
-def render_sidebar():
+def setup_page(title, icon):
+    _setup_config()
+    _render_title(title, icon)
+    _render_sidebar()
+
+
+def _setup_config():
+    st.set_page_config(
+        page_title="Dashboard Data Collection Jatim Barat",
+        layout="wide",
+        page_icon="📈",
+    )
+
+
+def _render_title(title, icon):
+    st.title(f"{icon} {title}")
+
+
+def _render_sidebar():
     """Render sidebar with navigation menu and sync button."""
 
     with st.sidebar:
