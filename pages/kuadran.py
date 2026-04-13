@@ -4,10 +4,9 @@ import streamlit as st
 
 from core.constant import COLUMNS_KUADRAN, COLUMNS_TUNGGAKAN_AM
 from data.database import load_database_nonpots
-from services.chart import prepare_total_with_forecast
 from services.filters import filter_collection_data
 from services.kuadran_service import prepare_kuadran_data
-from ui.chart import plot_chart
+from ui.chart import print_chart_tren_saldo
 from ui.kuadran import render_all_kuadran
 from ui.layout import print_sort_dataframe, render_sidebar
 from ui.metrics import render_dashboard_metrics
@@ -42,11 +41,7 @@ c1, c2 = st.columns(2)
 with c1:
     render_dashboard_metrics(filtered_df, segmen_target)
 with c2:
-    df_chart = prepare_total_with_forecast(
-        filter_collection_data(filtered_df, segmen_target)
-    )
-
-    plot_chart(df_chart)
+    print_chart_tren_saldo(filtered_df, segmen_target)
 
 # KUADRAN & SUMMARY
 tab_kuadran, tab_details = st.tabs(["Kuadran", "Detail"])

@@ -1,38 +1,129 @@
+from datetime import date, timedelta
+
 import pandas as pd
 
 
-def prepare_total_with_forecast(df, date_col="tanggal", value_col="saldo_akhir"):
+def get_available_billperiodes(df):
+    """Get sorted list of available billperiodes from dataframe."""
+    if "billperiode" in df.columns:
+        billperiode = df["billperiode"].dropna().unique()
+        return sorted(billperiode)
+    return []
+
+
+def prepare_forecast_nonpots(df, billperiode=None, value_col="saldo_akhir"):
+    """
+    Prepare forecast data grouped by billperiode or daily within a specific billperiode.
+
+    Args:
+        df: DataFrame with collection data
+        billperiode: Optional specific billperiode to filter (e.g., 202604)
+        value_col: Value column to aggregate
+
+    Returns:
+        DataFrame with:
+        - If billperiode provided: daily progression within that period + forecast
+        - If no billperiode: aggregated sums by billperiode + forecast to next period
+    """
     df = df.copy()
-    df[date_col] = pd.to_datetime(df[date_col])
 
-    # aggregate
-    df_actual = (
-        df.groupby(date_col)[value_col].sum().reset_index().sort_values(date_col)
-    )
+    if billperiode is not None:
+        # Filter to specific billperiode and show daily progression
+        df_filtered = df[df["billperiode"] == billperiode].copy()
 
-    # trend (avg diff 7 hari)
-    trend = df_actual[value_col].diff().tail(7).mean()
+        if df_filtered.empty:
+            return pd.DataFrame()
 
-    last_date = df_actual[date_col].max()
+        # Convert tanggal to datetime for daily aggregation
+        df_filtered["tanggal_dt"] = pd.to_datetime(
+            df_filtered["tanggal"], format="%d/%m/%Y", errors="coerce"
+        )
 
-    # target tgl 5 bulan berikutnya
-    next_month = last_date.month + 1 if last_date.month < 12 else 1
-    year = last_date.year if last_date.month < 12 else last_date.year + 1
-    target_date = pd.Timestamp(year, next_month, 5)
+        # Aggregate by day within the billperiode
+        df_actual = (
+            df_filtered.groupby("tanggal_dt")[value_col]
+            .sum()
+            .reset_index()
+            .sort_values("tanggal_dt")
+        )
+        df_actual.rename(columns={"tanggal_dt": "date"}, inplace=True)
 
-    future_dates = pd.date_range(last_date, target_date, freq="D")[1:]
+        # Calculate trend (avg daily change)
+        if len(df_actual) > 1:
+            trend = df_actual[value_col].diff().tail(7).mean()
+        else:
+            trend = 0
 
-    # forecast
-    last_value = df_actual[value_col].iloc[-1]
-    vals = []
-    current = last_value
-    for _ in future_dates:
-        current += trend
-        vals.append(current)
+        # Get last date and calculate forecast to end of period
+        last_date = df_actual["date"].max()
+        last_value = df_actual[value_col].iloc[-1]
 
-    df_forecast = pd.DataFrame({date_col: future_dates, value_col: vals})
+        # Determine end of current billperiode (day 5 of next month)
+        year = billperiode // 100
+        month = billperiode % 100
 
-    df_actual["type"] = "actual"
-    df_forecast["type"] = "forecast"
+        if month == 12:
+            end_period = date(year + 1, 1, 5)
+        else:
+            end_period = date(year, month + 1, 5)
 
-    return pd.concat([df_actual, df_forecast])
+        # Generate future dates until end of period
+        future_dates = pd.date_range(
+            last_date + timedelta(days=1), end_period, freq="D"
+        )
+
+        # Forecast values
+        vals = []
+        current = last_value
+        for _ in future_dates:
+            current += trend
+            vals.append(current)
+
+        df_forecast = pd.DataFrame(
+            {"date": future_dates, value_col: vals if vals else [last_value]}
+        )
+
+        df_actual["type"] = "actual"
+        df_forecast["type"] = "forecast"
+
+        return pd.concat([df_actual, df_forecast])
+
+    else:
+        # No specific billperiode - show aggregated by billperiode
+        df_actual = (
+            df.groupby("billperiode")[value_col]
+            .sum()
+            .reset_index()
+            .sort_values("billperiode")
+        )
+
+        if df_actual.empty:
+            return pd.DataFrame()
+
+        # Calculate trend (avg period-to-period change)
+        trend = df_actual[value_col].diff().tail(3).mean()
+
+        # Get last billperiode
+        last_bp = df_actual["billperiode"].max()
+        last_value = df_actual[value_col].iloc[-1]
+
+        # Calculate next billperiode
+        month = last_bp % 100
+        year = last_bp // 100
+
+        if month == 12:
+            next_bp = year * 100 + 1
+        else:
+            next_bp = year * 100 + month + 1
+
+        # Forecast for next period
+        forecast_value = last_value + trend
+
+        df_forecast = pd.DataFrame(
+            {"billperiode": [next_bp], value_col: [forecast_value]}
+        )
+
+        df_actual["type"] = "actual"
+        df_forecast["type"] = "forecast"
+
+        return pd.concat([df_actual, df_forecast])

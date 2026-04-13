@@ -25,6 +25,7 @@ SCHEMA_DATABASE_NONPOTS = {
     "tanggal": "date",
     "lama_tunggakan": "int",
     "kuadran": "int",
+    "billperiode": "int",
 }
 
 SCHEMA_DATABASE_UTIP = {
