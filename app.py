@@ -2,7 +2,7 @@ import streamlit as st
 
 from data.database import load_database_nonpots
 from services.filters import filter_collection_data
-from ui.chart import plot_chart, print_chart_tren_saldo
+from ui.chart import print_chart_tren_saldo
 from ui.layout import print_sort_dataframe, render_sidebar
 from ui.metrics import render_dashboard_metrics
 from utils.selector import pilih_all_segmen
