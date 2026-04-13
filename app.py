@@ -9,7 +9,7 @@ from utils.selector import pilih_all_segmen
 
 render_sidebar()
 df_nonpots = load_database_nonpots()
-st.dataframe(df_nonpots)
+
 LATEST_DATE = df_nonpots["tanggal"].max()
 
 # ====== Konfigurasi Page ======

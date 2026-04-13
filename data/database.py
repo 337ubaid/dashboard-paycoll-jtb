@@ -12,7 +12,6 @@ def load_database_nonpots():
         SPREADSHEET_ID["nonpots"], "pelanggan", ["idnumber", "nama_am", "nama_akun"]
     )
     df_keterangan = load_database(SPREADSHEET_ID["nonpots"], "keterangan")
-    st.dataframe(df_keterangan)
 
     df = df_collection.merge(df_pelanggan, on="idnumber", how="left")
     df = df.merge(df_keterangan, on="idnumber", how="left")

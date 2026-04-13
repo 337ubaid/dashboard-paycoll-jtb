@@ -3,14 +3,14 @@ import numpy as np
 from core.rule import BATAS_KUADRAN
 
 
-def prepare_kuadran_data(df, segmen, columns):
+def prepare_kuadran_data(df, segmen, columns_kuadran):
     from services.filters import filter_collection_data
 
     latest_date = df["tanggal"].max()
 
     df = filter_collection_data(df, segmen, tanggal=latest_date)
 
-    df = df[columns]
+    df = df[columns_kuadran]
 
     total_pelanggan = len(df)
     total_saldo = df["saldo_akhir"].sum()

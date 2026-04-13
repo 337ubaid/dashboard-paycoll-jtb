@@ -95,7 +95,7 @@ def _render_top_data(df, sort_column):
     """Render top 3 data sorted by column."""
     df_sorted = df.sort_values(sort_column, ascending=False).reset_index(drop=True)
     df_sorted.index = df_sorted.index + 1
-    render_dataframe(df_sorted.head(3))
+    render_dataframe(df_sorted.head(3).drop(columns=["kuadran"]))
 
 
 def _render_top_data_utip(df):
