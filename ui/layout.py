@@ -82,7 +82,7 @@ def _render_sync_section():
         st.cache_data.clear()
         st.cache_resource.clear()
         st.session_state.last_sync = datetime.now(ZoneInfo("Asia/Jakarta")).strftime(
-            "%d/%m/%Y - %H:%M"
+            "%H:%M"
         )
         st.success("Data telah disinkronkan!")
         st.rerun()
