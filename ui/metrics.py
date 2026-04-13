@@ -6,9 +6,9 @@ from services.metrics_service import calculate_dashboard_metrics
 def render_dashboard_metrics(df, segmen="-Semua-"):
     st.subheader("Metric Saldo")
 
-    df, saldo, pelanggan = calculate_dashboard_metrics(df, segmen)
-
-    latest_date = df["tanggal"].max()
+    df, saldo, pelanggan, different_days, latest_date = calculate_dashboard_metrics(
+        df, segmen
+    )
 
     col1, col2 = st.columns(2)
 
@@ -22,7 +22,7 @@ def render_dashboard_metrics(df, segmen="-Semua-"):
         )
 
         st.metric(
-            "Saldo Hari Ini (dibanding 3 hari lalu)",
+            f"Saldo Hari Ini (dibanding {different_days} hari lalu)",
             f"{saldo['today']:,.0f}",
             f"{saldo['delta_yesterday']:,.0f}",
             delta_color="inverse",
