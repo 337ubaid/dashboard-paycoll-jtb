@@ -154,3 +154,13 @@ def add_weekly_lines(fig, df, date_col):
                 width=1,
             ),
         )
+
+
+def get_previous_billperiode(billperiode):
+    month = billperiode % 100
+    year = billperiode // 100
+
+    if month == 1:
+        return (year - 1) * 100 + 12  # Year changes from 2026 to 2025, month = 12
+    else:
+        return year * 100 + (month - 1)
