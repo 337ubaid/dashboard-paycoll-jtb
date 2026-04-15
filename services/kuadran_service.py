@@ -18,7 +18,7 @@ def prepare_kuadran_data(df, segmen, columns_kuadran):
     return df, total_pelanggan, total_saldo
 
 
-def prepare_kuadran_utip(df, columns):
+def prepare_data_utip(df, columns):
     df = df[columns]
 
     total_pelanggan = len(df)

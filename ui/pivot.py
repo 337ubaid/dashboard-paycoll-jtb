@@ -17,3 +17,16 @@ def pivot_am_keterangan(df, value_type="saldo"):
     )
 
     return pivot.reset_index()
+
+
+def pivot_periode_utip(df_utip, value_type="SALDO AKHIR"):
+    pivot = df_utip.pivot_table(
+        index="Periode UTIP",
+        values=value_type,
+        aggfunc="sum",
+        fill_value=0,
+        margins=True,  # menambah total
+        margins_name="GRAND TOTAL",  # nama total
+    )
+
+    return pivot.reset_index()
