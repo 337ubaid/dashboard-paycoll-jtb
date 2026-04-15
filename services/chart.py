@@ -1,6 +1,112 @@
 from datetime import date, timedelta
 
 import pandas as pd
+import plotly.graph_objects as go
+import streamlit as st
+
+from core.constant import HARI_LIBUR
+from utils.formatter import format_skala_rupiah
+
+
+def plot_chart(df, mode="billperiode", value_col="saldo_akhir"):
+    """
+    Plot chart with support for both billperiode and daily modes.
+
+    Args:
+        df: DataFrame from prepare_forecast_nonpots
+        mode: "billperiode" (aggregated by period) or "daily" (daily progression)
+        value_col: Value column to plot
+    """
+    fig = go.Figure()
+
+    if df.empty:
+        # st.warning("Tidak ada data untuk ditampilkan")
+        return
+
+    # ======================
+    # 1. LINE PLOT
+    # ======================
+
+    for t, style in [("actual", "solid"), ("forecast", "dash")]:
+        d = df[df["type"] == t]
+
+        if d.empty:
+            continue
+
+        if mode == "daily":
+            x_col = "date"
+        else:
+            x_col = "billperiode"
+
+        fig.add_trace(
+            go.Scatter(
+                x=d[x_col],
+                y=d[value_col],
+                mode="lines+markers",
+                name=t,
+                line=dict(dash=style),
+            )
+        )
+
+    # ======================
+    # 2. LAST POINT LABEL
+    # ======================
+
+    if mode == "daily":
+        x_col = "date"
+    else:
+        x_col = "billperiode"
+
+    last = df.sort_values(x_col).groupby("type").tail(1)
+
+    for _, r in last.iterrows():
+        x_val = r[x_col]
+        fig.add_trace(
+            go.Scatter(
+                x=[x_val],
+                y=[r[value_col]],
+                mode="text",
+                text=[f"{format_skala_rupiah(r[value_col])}"],
+                showlegend=False,
+                textposition="top right",
+                textfont=dict(size=14),
+            )
+        )
+
+    # ======================
+    # 3. AXIS CONTROL
+    # ======================
+
+    max_val = df[value_col].max()
+    fig.update_yaxes(range=[0, max_val * 1.1])
+
+    if mode == "daily":
+        fig.update_xaxes(
+            range=[df["date"].min(), df["date"].max() + pd.Timedelta(days=3)]
+        )
+    else:
+        fig.update_xaxes(type="category")
+
+    fig.update_layout(hovermode="x unified", margin=dict(t=25, b=0, l=0, r=0))
+
+    # ======================
+    # 4. LIBUR AREA (only for daily mode)
+    # ======================
+    if mode == "daily":
+        libur_ranges = HARI_LIBUR
+
+        for start, end, label in libur_ranges:
+            fig.add_vrect(
+                x0=start,
+                x1=end,
+                fillcolor="gray",
+                opacity=0.1,
+                line_width=0,
+                annotation_text=label,
+                annotation_position="top left",
+            )
+
+    st.plotly_chart(fig, width="stretch")
 
 
 def get_available_billperiodes(df):

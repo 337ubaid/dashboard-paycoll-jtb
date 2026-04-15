@@ -38,7 +38,7 @@ def render_dashboard_metrics(df, segmen="-Semua-"):
         )
 
         st.metric(
-            "Pelanggan Hari Ini (dibanding 3 hari lalu)",
+            f"Pelanggan Hari Ini (dibanding  {different_days} hari lalu)",
             f"{pelanggan['today']:,.0f}",
             f"{pelanggan['delta_yesterday']:,.0f}",
             delta_color="inverse",

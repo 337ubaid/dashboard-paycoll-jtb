@@ -64,6 +64,7 @@ def _render_sidebar():
 
         # Sync section
         st.divider()
+        st.caption("Sync Data")
         _render_sync_section()
 
 
