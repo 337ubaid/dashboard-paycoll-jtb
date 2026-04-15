@@ -23,6 +23,7 @@ def pivot_periode_utip(df_utip, value_type="saldo_akhir"):
     pivot = df_utip.pivot_table(
         index="Periode UTIP",
         values=value_type,
+        columns="KET 2",
         aggfunc="sum",
         fill_value=0,
         margins=True,  # menambah total
