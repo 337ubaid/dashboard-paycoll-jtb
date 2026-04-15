@@ -1,4 +1,5 @@
 import plotly.express as px
+
 from services.utip_service import agg_keterangan
 
 KET_COLOR_MAP = {
@@ -11,7 +12,7 @@ KET_COLOR_MAP = {
 DEFAULT_COLOR = "#bdbdbd"
 
 
-def plot_pie(df, col_ket="KET 2", value_type="saldo"):
+def plot_pie_utip(df, col_ket="KET 2", value_type="saldo"):
 
     data = agg_keterangan(df, col_ket, value_type)
     colors = [KET_COLOR_MAP.get(v.lower(), DEFAULT_COLOR) for v in data[col_ket]]

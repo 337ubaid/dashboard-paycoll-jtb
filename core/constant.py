@@ -16,7 +16,7 @@ COLUMNS_KUADRAN_UTIP = [
     "SEGMEN",
     "ACCTNO",
     "nama_am",
-    "SALDO AKHIR",
+    "saldo_akhir",
     "KET",
     "KET 2",
     "kuadran",

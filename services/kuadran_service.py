@@ -22,7 +22,7 @@ def prepare_data_utip(df, columns):
     df = df[columns]
 
     total_pelanggan = len(df)
-    total_saldo = df["SALDO AKHIR"].sum()
+    total_saldo = df["saldo_akhir"].sum()
 
     return df, total_pelanggan, total_saldo
 

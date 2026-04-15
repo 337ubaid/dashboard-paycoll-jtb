@@ -130,3 +130,28 @@ def render_editable_keterangan(df, key_suffix=""):
     )
 
     return edited_df
+
+
+from ui.pie import plot_pie_utip
+from ui.pivot import pivot_am_keterangan
+
+
+def summary_data_utip(df_db_utip, value_type):
+    fig = plot_pie_utip(df_db_utip, "KET 2", value_type)
+    pivot = pivot_am_keterangan(df_db_utip, value_type)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Distribusi Keterangan UTIP")
+        st.plotly_chart(fig, width="stretch")
+    with col2:
+        st.subheader("Tunggakan tiap AM")
+        st.dataframe(
+            pivot,
+            column_config={
+                col: st.column_config.NumberColumn(format="%,d")
+                for col in pivot.columns
+                if col != "nama_am"
+            },
+            width="stretch",
+        )

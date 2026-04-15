@@ -34,7 +34,7 @@ def load_database_utip():
             "ACCTNO",
             "STANDART CUSTOMER NAME",
             "SALDO AWAL",
-            "SALDO AKHIR",
+            "saldo_akhir",
             "KET",
             "KET 2",
             "nama_am",

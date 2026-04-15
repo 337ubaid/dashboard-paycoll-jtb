@@ -64,7 +64,7 @@ def render_kuadran_utip(df, kuadran, total_pelanggan, total_saldo):
 
     # Calculate metrics
     total_pelanggan_k = len(df_display)
-    total_saldo_k = df_display["SALDO AKHIR"].sum()
+    total_saldo_k = df_display["saldo_akhir"].sum()
 
     persen_pelanggan = (
         (total_pelanggan_k / total_pelanggan * 100) if total_pelanggan else 0
@@ -100,6 +100,6 @@ def _render_top_data(df, sort_column):
 
 def _render_top_data_utip(df):
     """Render top 3 data for UTIP."""
-    df_sorted = df.sort_values("SALDO AKHIR", ascending=False).reset_index(drop=True)
+    df_sorted = df.sort_values("saldo_akhir", ascending=False).reset_index(drop=True)
     df_sorted.index = df_sorted.index + 1
     render_dataframe(df_sorted.head(3))

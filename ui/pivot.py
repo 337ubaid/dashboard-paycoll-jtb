@@ -3,7 +3,7 @@ def pivot_am_keterangan(df, value_type="saldo"):
         value = "ACCTNO"
         aggfunc = "nunique"
     elif value_type == "saldo":
-        value = "SALDO AKHIR"
+        value = "saldo_akhir"
         aggfunc = "sum"
 
     pivot = df.pivot_table(
@@ -19,7 +19,7 @@ def pivot_am_keterangan(df, value_type="saldo"):
     return pivot.reset_index()
 
 
-def pivot_periode_utip(df_utip, value_type="SALDO AKHIR"):
+def pivot_periode_utip(df_utip, value_type="saldo_akhir"):
     pivot = df_utip.pivot_table(
         index="Periode UTIP",
         values=value_type,

@@ -61,7 +61,7 @@ SCHEMA_DATABASE_UTIP = {
     "REFUND": "currency",
     "PEND. LAIN-LAIN": "currency",
     "ADJUSTMENT": "currency",
-    "SALDO AKHIR": "currency",
+    "saldo_akhir": "currency",
     "ENTRY DATE": "date",
     "KET": "str",
     "KET 2": "str",
