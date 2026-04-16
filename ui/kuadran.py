@@ -1,7 +1,7 @@
 # ui/kuadran.py
 import streamlit as st
 
-from core.rule import KUADRAN_INFO
+from core.rule import KUADRAN_INFO, KUADRAN_KET
 from ui.layout import render_dataframe
 from utils.formatter import format_skala_rupiah
 
@@ -21,11 +21,18 @@ def render_all_kuadran(df, total_pelanggan, total_saldo):
         render_kuadran(df, 4, total_pelanggan, total_saldo)
 
 
+def help_kuadran(kuadran):
+    return KUADRAN_KET[kuadran]
+
+
 def render_kuadran(df, kuadran, total_pelanggan, total_saldo):
     """Render single kuadran with customer count, saldo, and top 3 data."""
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader(f"Kuadran {kuadran}")
+        st.subheader(
+            f"Kuadran {kuadran}",
+            help=help_kuadran(kuadran),
+        )
     with col2:
         render_kuadran_legend(kuadran)
 

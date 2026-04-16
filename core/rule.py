@@ -33,3 +33,10 @@ KUADRAN_INFO = {
         "ui": "error",
     },
 }
+
+KUADRAN_KET = {
+    1: f"Perlu Perhatian Cepat sebelum Menjadi Lama",
+    2: f"Prioritas Utama Penagihan",
+    3: f"Risiko Rendah, Cukup Monitoring",
+    4: f"Perlu Penanganan, Prioritas ke-2",
+}

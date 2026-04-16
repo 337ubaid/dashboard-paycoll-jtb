@@ -18,7 +18,7 @@ df_database = load_database_nonpots()
 latest_date = df_database["tanggal"].max()
 
 # ====== Konfigurasi Page ======
-setup_page("Kuadran", "❇️")
+setup_page("Detail Pelanggan", "❇️")
 # ==============================
 
 # FILTERING
@@ -33,6 +33,7 @@ with c3:
 
 filtered_df = cari_am(df_database, nama_am)
 
+st.header("📌 Summary")
 c1, c2 = st.columns(2)
 # METRICS
 with c1:
@@ -41,9 +42,12 @@ with c2:
     print_chart_tren_saldo(filtered_df, segmen_target)
 
 # KUADRAN & SUMMARY
+st.header(
+    "📌 Kuadran",
+    help="Pengelompokkan prioritas pelanggan berdasarkan besar **Nilai Pinjaman** dan **Lama Tunggakan**",
+)
 tab_kuadran, tab_details = st.tabs(["Kuadran", "Detail"])
 filtered_df = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
-
 
 with tab_kuadran:
     df_kuadran, total_pelanggan, total_saldo = prepare_kuadran_data(
@@ -70,7 +74,10 @@ with tab_details:
 
 # UTIP
 st.divider()
-st.subheader("UTIP")
+st.header(
+    "📌 UTIP",
+    help="Uang Titipan",
+)
 from data.database import load_database_utip
 
 df_db_utip = load_database_utip()
