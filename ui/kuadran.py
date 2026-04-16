@@ -19,10 +19,6 @@ def render_all_kuadran(df, total_pelanggan, total_saldo):
         render_kuadran(df, 3, total_pelanggan, total_saldo)
     with c4:
         render_kuadran(df, 4, total_pelanggan, total_saldo)
-    st.markdown(
-        "> _Kuadran membantu tim menentukan prioritas penagihan secara cepat dan objektif berdasarkan tingkat risiko._",
-        text_alignment="center",
-    )
 
 
 def help_kuadran(kuadran):
