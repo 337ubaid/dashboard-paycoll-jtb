@@ -17,8 +17,8 @@ PAGES = [
         "icon": ":material/event_repeat:",
     },
     {
-        "page": "pages/kuadran.py",
-        "label": "Kuadran",
+        "page": "pages/detail_pelanggan.py",
+        "label": "Detail Pelanggan",
         "icon": ":material/dataset:",
     },
     {
