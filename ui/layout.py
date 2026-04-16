@@ -19,7 +19,7 @@ PAGES = [
     {
         "page": "pages/detail_pelanggan.py",
         "label": "Detail Pelanggan",
-        "icon": ":material/dataset:",
+        "icon": ":material/read_more:",
     },
     {
         "page": "pages/update_batas_kuadran.py",
