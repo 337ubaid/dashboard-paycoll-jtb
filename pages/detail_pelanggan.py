@@ -12,6 +12,30 @@ from ui.layout import print_sort_dataframe, setup_page
 from ui.metrics import render_dashboard_metrics
 from utils.selector import cari_am, input_am, pilih_all_segmen
 
+
+def update_keterangan(df, key_suffix):
+    df_edit_keterangan = st.data_editor(
+        df,
+        disabled=df.drop(columns=["keterangan"]),
+        key=f"editor_ket_{key_suffix}",
+    )
+
+    df = df.fillna("")
+    df_edit_keterangan = df_edit_keterangan.fillna("")
+
+    df_ket = df.set_index("idnumber")["keterangan"]
+    df_edit_keterangan_ket = df_edit_keterangan.set_index("idnumber")["keterangan"]
+
+    changed_ids = df_ket.ne(df_edit_keterangan_ket)  # not equal
+
+    result = df_edit_keterangan[
+        df_edit_keterangan["idnumber"].isin(changed_ids[changed_ids].index)
+    ]
+    result = result[["idnumber", "nama_akun", "nama_am", "keterangan"]]
+
+    st.write(result)
+
+
 TODAY = date.today()
 
 df_database = load_database_nonpots()
@@ -70,7 +94,15 @@ with tab_details:
             else:
                 df_show = filtered_df[filtered_df["kuadran"] == i]
             st.info(f"{len(df_show)} Pelanggan")
-            print_sort_dataframe(df_show)
+            # print_sort_dataframe(df_show)
+            update_keterangan(df_show, key_suffix=i)
+#############################################################################
+
+
+# if st.button("Save", type="primary"):
+#     pass
+#############################################################################
+
 
 # UTIP
 st.divider()

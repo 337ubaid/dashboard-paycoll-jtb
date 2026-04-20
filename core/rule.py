@@ -9,8 +9,8 @@ AGING_RULE = {
 BATAS_KUADRAN = {
     "RBS": {"lama_tunggakan": 3, "saldo_akhir": 10_000_000},
     "DGS": {"lama_tunggakan": 6, "saldo_akhir": 20_000_000},
-    "DPS": {"lama_tunggakan": 3, "saldo_akhir": 10_000_000},  # 3
-    "DSS": {"lama_tunggakan": 3, "saldo_akhir": 10_000_000},  # 3  # 10_000_000
+    "DPS": {"lama_tunggakan": 3, "saldo_akhir": 10_000_000},
+    "DSS": {"lama_tunggakan": 3, "saldo_akhir": 10_000_000},
     "UTIP": {"lama_tunggakan": 3, "saldo_akhir": 10_000_000},
 }
 
