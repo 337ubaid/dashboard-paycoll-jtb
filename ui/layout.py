@@ -31,6 +31,11 @@ PAGES = [
         "label": "UTIP",
         "icon": ":material/money_bag:",
     },
+    {
+        "page": "pages/cr_cyc.py",
+        "label": "CR CYC",
+        "icon": ":material/monitoring:",
+    },
 ]
 
 
