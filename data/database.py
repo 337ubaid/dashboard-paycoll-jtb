@@ -19,6 +19,15 @@ def load_database_nonpots():
     return df
 
 
+#
+def load_database_cr():
+    df = load_database(SPREADSHEET_ID["nonpots"], "cr")
+    return df
+
+
+# #
+
+
 @st.cache_data(ttl=600)
 def load_database_utip():
     df = load_database(

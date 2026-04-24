@@ -10,6 +10,7 @@ WORKSHEETS_NONPOTS = {
     "collection": "DATABASE",
     "pelanggan": "DATA_PELANGGAN",
     "keterangan": "DATA_KETERANGAN",
+    "cr": "DATA_CR",
 }
 
 WORKSHEETS_UTIP = {"utip": "UTIP APRIL"}

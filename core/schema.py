@@ -71,11 +71,41 @@ SCHEMA_DATABASE_UTIP = {
     "Penyelesaian": "str",
 }
 
+SCHEMA_DATABASE_CR = {
+    "ubis": "string",
+    "saldo_awal": "currency",
+    "total_ly_balance": "currency",
+    "billing": "currency",
+    "cl": "currency",
+    "cl_cash": "currency",
+    "cl_cash_pct": "percentage",
+    "cl_non_cash": "currency",
+    "cl_non_cash_pct": "percentage",
+    "cash_bayar": "currency",
+    "cash_bayar_pct": "percentage",
+    "cash_netoff": "currency",
+    "cash_netoff_pct": "percentage",
+    "non_cash_klaim": "currency",
+    "non_cash_klaim_pct": "percentage",
+    "non_cash_wroff": "currency",
+    "non_cash_wroff_pct": "percentage",
+    "billing_bjt": "currency",
+    "cl_bjt": "currency",
+    "cash_bjt": "currency",
+    "cr": "currency",
+    "cr_cash": "currency",
+    "saldo_akhir": "currency",
+    "jhr": "number",
+    "rtr": "number",
+    "acp": "number",
+}
+
 SCHEMA_MAP = {
     "collection": SCHEMA_DATABASE_NONPOTS,
     "pelanggan": SCHEMA_DATABASE_PELANGGAN,
     "keterangan": SCHEMA_DATABASE_KETERANGAN,
     "utip": SCHEMA_DATABASE_UTIP,
+    "cr": SCHEMA_DATABASE_CR,
 }
 
 ALL_SCHEMAS = {
