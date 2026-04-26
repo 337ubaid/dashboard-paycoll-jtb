@@ -36,6 +36,11 @@ PAGES = [
         "label": "CR CYC",
         "icon": ":material/monitoring:",
     },
+    {
+        "page": "pages/supabase.py",
+        "label": "Supabase",
+        "icon": ":material/monitoring:",
+    },
 ]
 
 
