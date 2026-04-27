@@ -6,8 +6,12 @@ from core.schema import SEGMEN, SEGMEN_ONLY
 
 
 def pilih_all_segmen(key="segmen"):
+    selected = st.selectbox("Pilih Segmen", SEGMEN, key=key)
 
-    return st.selectbox("Pilih Segmen", SEGMEN, key=key)
+    if selected not in SEGMEN_ONLY:
+        return None
+
+    return selected
 
 
 def pilih_segmen(key="segmen"):
