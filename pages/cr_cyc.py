@@ -5,85 +5,58 @@ from datetime import datetime
 from data.database import load_database_cr, load_database_nonpots
 from services.filters import filter_column
 from ui.layout import setup_page
-from utils.selector import pilih_segmen
+from utils.selector import pilih_all_segmen
 
 setup_page("CR CYC Performance", "🗓️")
 
-segmen = pilih_segmen()
+segmen = pilih_all_segmen()
+if segmen is None:
+    segmen = "Total"
 
-conn= st.connection("supabase")
-query = """
-select * from mybrains_cr
-"""
-df_cr = conn.query(query)
-st.dataframe(df_cr)
-
+conn = st.connection("supabase")
+df_cr = conn.query("select * from mybrains_cr", params={"ubis": segmen})
 df_target_cr = conn.query("select * from target_cr", params={"ubis": segmen})
-st.write(df_target_cr)
+df_cyc = conn.query("select * from mybrains_cyc", params={"ubis": segmen})
+df_target_cyc = conn.query("select * from target_cyc", params={"ubis": segmen})
 
-# metric_cr_cyc
-def metric_cr_cyc(cr_cyc, now, target, shortage):
+def metric_cr_cyc(cr_cyc, now, target, shortage, metric_label="CR"):
     st.header(cr_cyc)
     c1, c2 = st.columns(2)
-
-
-    c1.metric(
-        "Total CR",
-        f"{now:.2%}",
-        delta=f"{now - target:.2%}",
-        delta_arrow="off",
-    )
-    c2.metric(
-        "Target CR",
-        f"{target:.2%}",
-    )
-    st.metric(
-        "Shortage",
-        shortage,
-    )
-
+    c1.metric(f"Total {metric_label}", f"{now:.2%}", delta=f"{now - target:.2%}", delta_arrow="off")
+    c2.metric(f"Target {metric_label}", f"{target:.2%}")
+    st.metric("Shortage", shortage)
 
 def count_shortage(diff_cr, bill_total, bill_bjt, cash_bjt):
     return diff_cr * (bill_total - bill_bjt + cash_bjt) * -1_000_000_000
 
+def get_metric_data(df, df_target, metric_type, segmen, month_column):
+    """Extract metric data from dataframes"""
+    value_col = f"{metric_type} CASH" if metric_type == "CYC" else "CR CASH"
+    bill_col = "BILL" if metric_type == "CYC" else "BILL (TOTAL)"
+    
+    now = df[df['UBIS'] == segmen][value_col].values[0]
+    target_row = df_target[df_target['SEGMEN'] == segmen]
+    target = target_row[month_column].values[0] if not target_row.empty and month_column in target_row.columns else 0.0
+    
+    bill_total = df[df['UBIS'] == segmen][bill_col].values[0]
+    bill_bjt = df[df['UBIS'] == segmen]['BILL BJT'].values[0]
+    cash_bjt = df[df['UBIS'] == segmen]['CASH BJT'].values[0]
+    
+    diff = target - now
+    shortage = count_shortage(diff, bill_total, bill_bjt, cash_bjt)
+    return now, target, f"Rp {shortage:,.0f}", shortage
 
+month_column = str(datetime.now().month)
 col1, col2 = st.columns(2)
 
-cr_now = df_cr[df_cr['UBIS'] == segmen]['CR CASH'].values[0]
-
-current_month = datetime.now().month
-month_column = str(current_month)
-
-target_row = df_target_cr[df_target_cr['SEGMEN'] == segmen]
-if not target_row.empty and month_column in target_row.columns:
-    cr_target = target_row[month_column].values[0]
-else:
-    cr_target = 0.0
-
-diff_cr = cr_target - cr_now
-bill_total = df_cr[df_cr['UBIS'] == segmen]['BILL (TOTAL)'].values[0]
-bill_bjt = df_cr[df_cr['UBIS'] == segmen]['BILL BJT'].values[0]
-cash_bjt = df_cr[df_cr['UBIS'] == segmen]['CASH BJT'].values[0]
-
-
-shortage = count_shortage(diff_cr, bill_total, bill_bjt, cash_bjt)
-
 with col1:
-    metric_cr_cyc(
-        "Collection Ratio",
-        cr_now,
-        cr_target,
-        f"Rp {shortage:,.0f}",
-    )
-    # st.header("Top 10")
+    cr_now, cr_target, shortage_cr_str, _ = get_metric_data(df_cr, df_target_cr, "CR", segmen, month_column)
+    metric_cr_cyc("Collection Ratio", cr_now, cr_target, shortage_cr_str, "CR")
+
 with col2:
-    metric_cr_cyc(
-        "Current Year Collection",
-        cr_now,
-        cr_target,
-        shortage,
-    )
-    # st.header("Top 10")
+    cyc_now, cyc_target, shortage_cyc_str, _ = get_metric_data(df_cyc, df_target_cyc, "CYC", segmen, month_column)
+    metric_cr_cyc("Current Year Collection", cyc_now, cyc_target, shortage_cyc_str, "CYC")
+
 st.divider()
 
 

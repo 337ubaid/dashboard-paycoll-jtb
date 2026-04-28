@@ -115,4 +115,4 @@ ALL_SCHEMAS = {
 }
 
 SEGMEN_ONLY = ["DGS", "DPS", "DSS", "RBS"]
-SEGMEN = ["-Semua-"] + SEGMEN_ONLY + ["UNIDENTIFIED"]
+SEGMEN = ["-Semua-"] + SEGMEN_ONLY
