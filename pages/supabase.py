@@ -71,3 +71,10 @@ st.write(f"where_clause :{where_clause}")
 st.write(f"params : {params}")
 st.write(total_saldo)
 ###
+
+conn = st.connection("supabase")
+query = """
+select * from target_cr
+"""
+
+st.write(conn.query(query))
