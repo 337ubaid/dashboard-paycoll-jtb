@@ -14,9 +14,9 @@ if segmen is None:
     segmen = "Total"
 
 conn = st.connection("supabase")
-df_cr = conn.query("select * from mybrains_cr", params={"ubis": segmen})
+df_cr = conn.query("select * from mybrains_cr where tanggal = (select MAX(tanggal) from mybrains_cr)", params={"ubis": segmen})
 df_target_cr = conn.query("select * from target_cr", params={"ubis": segmen})
-df_cyc = conn.query("select * from mybrains_cyc", params={"ubis": segmen})
+df_cyc = conn.query("select * from mybrains_cyc where tanggal = (select MAX(tanggal) from mybrains_cyc)", params={"ubis": segmen})
 df_target_cyc = conn.query("select * from target_cyc", params={"ubis": segmen})
 
 def metric_cr_cyc(cr_cyc, now, target, shortage, metric_label="CR"):
@@ -56,6 +56,9 @@ with col1:
 with col2:
     cyc_now, cyc_target, shortage_cyc_str, _ = get_metric_data(df_cyc, df_target_cyc, "CYC", segmen, month_column)
     metric_cr_cyc("Current Year Collection", cyc_now, cyc_target, shortage_cyc_str, "CYC")
+
+latest_date = df_cr['tanggal'].values[0]
+st.info(f"**Terakhir diperbarui:** {latest_date}")
 
 st.divider()
 
