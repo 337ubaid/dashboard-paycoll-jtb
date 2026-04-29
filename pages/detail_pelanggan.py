@@ -42,8 +42,18 @@ TODAY = date.today()
 conn = st.connection("supabase")
 df_mybrains = conn.query("select * from mybrains_nonpots where tanggal = (select MAX(tanggal) from mybrains_nonpots) and saldo_akhir > 0")
 df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
+df_keterangan = conn.query("""
+    select * from keterangan_nonpots
+    where (idnumber, last_update_ket) in (
+        select idnumber, MAX(last_update_ket) 
+        from keterangan_nonpots 
+        group by idnumber
+    )
+""")
 
+# Merge 3 dataframe berdasarkan idnumber
 df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
+df_database = df_database.merge(df_keterangan, on="idnumber", how="left")
 st.write(df_database)
 latest_date = df_database["tanggal"].max()
 
