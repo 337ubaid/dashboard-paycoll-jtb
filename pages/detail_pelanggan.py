@@ -62,6 +62,11 @@ with c2:
 
 filtered_df = cari_am(df_database, nama_am)
 
+if filtered_df.empty:
+    am_display = nama_am if nama_am.upper().startswith("AM") else f"AM {nama_am}"
+    st.error(f"{am_display.upper()} tidak ditemukan.")
+    st.stop()
+
 st.header("📌 Summary")
 c1, c2 = st.columns(2)
 with c1:
