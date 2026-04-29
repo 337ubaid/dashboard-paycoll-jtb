@@ -40,7 +40,7 @@ TODAY = date.today()
 
 # df_database = load_database_nonpots()
 conn = st.connection("supabase")
-df_mybrains = conn.query("select * from mybrains_nonpots")
+df_mybrains = conn.query("select * from mybrains_nonpots where tanggal = (select MAX(tanggal) from mybrains_nonpots) and saldo_akhir > 0")
 df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
 
 df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
