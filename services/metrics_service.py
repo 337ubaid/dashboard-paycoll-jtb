@@ -34,3 +34,36 @@ def calculate_dashboard_metrics(df, segmen):
         different_days,
         latest_date,
     )
+
+
+def calculate_dashboard_metrics_supabase(df):
+
+    start_periode = df.iloc[2]["tanggal"]
+    yesterday = df.iloc[1]["tanggal"]
+    latest_date = df.iloc[0]["tanggal"]
+    different_days = (latest_date - yesterday).days
+
+    nominal_today = df.iloc[0]["total_saldo"]
+    nominal_yesterday = df.iloc[1]["total_saldo"]
+    nominal_start_periode = df.iloc[2]["total_saldo"]
+
+    pelanggan_today = df.iloc[0]["total_pelanggan"]
+    pelanggan_yesterday = df.iloc[1]["total_pelanggan"]
+    pelanggan_start_periode = df.iloc[2]["total_pelanggan"]
+
+    return (
+        {
+            "today": nominal_today,
+            "delta_yesterday": nominal_today - nominal_yesterday,
+            "delta_start_periode": nominal_today - nominal_start_periode,
+            "start_periode": nominal_start_periode,
+        },
+        {
+            "today": pelanggan_today,
+            "delta_yesterday": pelanggan_today - pelanggan_yesterday,
+            "delta_start_periode": pelanggan_today - pelanggan_start_periode,
+            "start_periode": pelanggan_start_periode,
+        },
+        different_days,
+        latest_date,
+    )
