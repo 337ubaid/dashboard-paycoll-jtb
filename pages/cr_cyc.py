@@ -3,6 +3,7 @@ import streamlit as st
 from datetime import datetime
 
 from data.database import load_database_nonpots
+from data.supabase import get_database_cr_cyc
 from services.filters import filter_column
 from ui.layout import setup_page
 from utils.selector import pilih_all_segmen
@@ -13,11 +14,7 @@ segmen = pilih_all_segmen()
 if segmen is None:
     segmen = "Total"
 
-conn = st.connection("supabase")
-df_cr = conn.query("select * from mybrains_cr where tanggal = (select MAX(tanggal) from mybrains_cr)", params={"ubis": segmen})
-df_target_cr = conn.query("select * from target_cr", params={"ubis": segmen})
-df_cyc = conn.query("select * from mybrains_cyc where tanggal = (select MAX(tanggal) from mybrains_cyc)", params={"ubis": segmen})
-df_target_cyc = conn.query("select * from target_cyc", params={"ubis": segmen})
+df_cr, df_target_cr, df_cyc, df_target_cyc = get_database_cr_cyc(segmen)
 
 def metric_cr_cyc(cr_cyc, now, target, shortage, metric_label="CR"):
     st.header(cr_cyc)
