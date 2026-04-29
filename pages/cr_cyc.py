@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from datetime import datetime
 
-from data.database import load_database_cr, load_database_nonpots
+from data.database import load_database_nonpots
 from services.filters import filter_column
 from ui.layout import setup_page
 from utils.selector import pilih_all_segmen

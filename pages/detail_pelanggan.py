@@ -38,7 +38,13 @@ def update_keterangan(df, key_suffix):
 
 TODAY = date.today()
 
-df_database = load_database_nonpots()
+# df_database = load_database_nonpots()
+conn = st.connection("supabase")
+df_mybrains = conn.query("select * from mybrains_nonpots")
+df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
+
+df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
+st.write(df_database)
 latest_date = df_database["tanggal"].max()
 
 # ====== Konfigurasi Page ======
