@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+from datetime import datetime
 
 from data.database import load_database_cr, load_database_nonpots
 from services.filters import filter_column
@@ -10,24 +11,31 @@ setup_page("CR CYC Performance", "🗓️")
 
 segmen = pilih_segmen()
 
-df_cr = load_database_cr()
+conn= st.connection("supabase")
+query = """
+select * from mybrains_cr
+"""
+df_cr = conn.query(query)
 st.dataframe(df_cr)
 
+df_target_cr = conn.query("select * from target_cr", params={"ubis": segmen})
+st.write(df_target_cr)
 
 # metric_cr_cyc
 def metric_cr_cyc(cr_cyc, now, target, shortage):
     st.header(cr_cyc)
     c1, c2 = st.columns(2)
 
+
     c1.metric(
         "Total CR",
-        f"{now:.2f}%",
-        delta=f"{now - target:.2f}%",
+        f"{now:.2%}",
+        delta=f"{now - target:.2%}",
         delta_arrow="off",
     )
     c2.metric(
         "Target CR",
-        f"{target:.2f}%",
+        f"{target:.2%}",
     )
     st.metric(
         "Shortage",
@@ -36,18 +44,26 @@ def metric_cr_cyc(cr_cyc, now, target, shortage):
 
 
 def count_shortage(diff_cr, bill_total, bill_bjt, cash_bjt):
-    return diff_cr * (bill_total - bill_bjt + cash_bjt)
+    return diff_cr * (bill_total - bill_bjt + cash_bjt) * -1_000_000_000
 
 
 col1, col2 = st.columns(2)
-#
-cr_now = 72.46
-cr_target = 65.76
+
+cr_now = df_cr[df_cr['UBIS'] == segmen]['CR CASH'].values[0]
+
+current_month = datetime.now().month
+month_column = str(current_month)
+
+target_row = df_target_cr[df_target_cr['SEGMEN'] == segmen]
+if not target_row.empty and month_column in target_row.columns:
+    cr_target = target_row[month_column].values[0]
+else:
+    cr_target = 0.0
 
 diff_cr = cr_target - cr_now
-bill_total = 91_334_531_573
-bill_bjt = 17513552753
-cash_bjt = 10652516972
+bill_total = df_cr[df_cr['UBIS'] == segmen]['BILL (TOTAL)'].values[0]
+bill_bjt = df_cr[df_cr['UBIS'] == segmen]['BILL BJT'].values[0]
+cash_bjt = df_cr[df_cr['UBIS'] == segmen]['CASH BJT'].values[0]
 
 
 shortage = count_shortage(diff_cr, bill_total, bill_bjt, cash_bjt)
@@ -57,7 +73,7 @@ with col1:
         "Collection Ratio",
         cr_now,
         cr_target,
-        f"Rp {shortage:,.2f}",
+        f"Rp {shortage:,.0f}",
     )
     # st.header("Top 10")
 with col2:
