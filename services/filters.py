@@ -7,7 +7,7 @@ def filter_collection_data(df, segmen, kuadran=None, tanggal=None):
 
     df = df[(df["saldo_akhir"] > 0) | (df["kuadran"] != 0)]
 
-    if segmen != "-Semua-" or segmen is None:
+    if segmen is not None and segmen != "-Semua-":
         df = df[df["segmen"] == segmen]
 
     if kuadran is not None:
