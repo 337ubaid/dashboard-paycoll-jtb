@@ -105,3 +105,22 @@ def get_data_nonpots(filters: dict):
         FROM mybrains_nonpots
     """
     return fetch_data(query, where_clause, params)
+
+
+def get_database_detail_pelanggan():
+    """Fetch and merge database untuk Detail Pelanggan"""
+    df_mybrains = conn.query("select * from mybrains_nonpots where saldo_akhir > 0")
+    df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
+    df_keterangan = conn.query("""
+        select * from keterangan_nonpots
+        where (idnumber, last_update_ket) in (
+            select idnumber, MAX(last_update_ket) 
+            from keterangan_nonpots 
+            group by idnumber
+        )
+    """)
+
+    df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
+    df_database = df_database.merge(df_keterangan, on="idnumber", how="left")
+    
+    return df_database

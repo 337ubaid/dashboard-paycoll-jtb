@@ -1,9 +1,8 @@
-from datetime import date
-
 import streamlit as st
 
 from core.constant import COLUMNS_KUADRAN
 from data.database import load_database_utip
+from data.supabase import get_database_detail_pelanggan
 from services.filters import filter_collection_data
 from services.kuadran_service import prepare_kuadran_data
 from ui.chart import print_chart_tren_saldo
@@ -36,20 +35,7 @@ def update_keterangan(df, key_suffix):
     st.write(result)
 
 
-conn = st.connection("supabase")
-df_mybrains = conn.query("select * from mybrains_nonpots where saldo_akhir > 0")
-df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
-df_keterangan = conn.query("""
-    select * from keterangan_nonpots
-    where (idnumber, last_update_ket) in (
-        select idnumber, MAX(last_update_ket) 
-        from keterangan_nonpots 
-        group by idnumber
-    )
-""")
-
-df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
-df_database = df_database.merge(df_keterangan, on="idnumber", how="left")
+df_database = get_database_detail_pelanggan()
 latest_date = df_database["tanggal"].max()
 
 setup_page("Detail Pelanggan", "❇️")
