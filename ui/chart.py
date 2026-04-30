@@ -8,6 +8,40 @@ from services.chart import (
 )
 from services.filters import filter_collection_data
 
+from data.supabase import get_chart_data_nonpots
+
+
+def print_chart_tren_saldo_supabaase(filters):
+    st.subheader("Tren Saldo")
+
+    # Fetch data
+    df_filtered = get_chart_data_nonpots(filters)
+
+    # Billperiode selector
+    available_bps = get_available_billperiodes(df_filtered)
+
+    # Format billperiodes for display
+    bp_options = ["Semua Periode"] + [
+        f"{bp // 100}-{bp % 100:02d}" for bp in available_bps
+    ]
+    selected_bp_display = st.selectbox(
+        "Pilih Bill Periode", bp_options, index=len(bp_options) - 1
+    )
+
+    # Convert back to integer or None
+    if selected_bp_display == "Semua Periode":
+        selected_billperiode = None
+    else:
+        bp_parts = selected_bp_display.split("-")
+        selected_billperiode = int(bp_parts[0]) * 100 + int(bp_parts[1])
+
+    # Prepare chart data
+    df_chart = prepare_forecast_nonpots(df_filtered, billperiode=selected_billperiode)
+
+    # Determine mode
+    chart_mode = "daily" if selected_billperiode else "billperiode"
+
+    plot_chart(df_chart, mode=chart_mode)
 
 def print_chart_tren_saldo(df_nonpots, segmen_target):
     st.subheader("Tren Saldo")
@@ -40,7 +74,6 @@ def print_chart_tren_saldo(df_nonpots, segmen_target):
     chart_mode = "daily" if selected_billperiode else "billperiode"
 
     plot_chart(df_chart, mode=chart_mode)
-
 
 def add_weekly_lines(fig, df, date_col):
     start = df[date_col].min()

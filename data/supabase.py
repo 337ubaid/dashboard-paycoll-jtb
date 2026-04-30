@@ -110,7 +110,9 @@ def get_data_nonpots(filters: dict):
 def get_database_detail_pelanggan():
     """Fetch and merge database untuk Detail Pelanggan"""
     df_mybrains = conn.query("select * from mybrains_nonpots where saldo_akhir > 0")
-    df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
+    df_pelanggan = conn.query(
+        "select idnumber, nama_akun, nama_am from pelanggan_nonpots"
+    )
     df_keterangan = conn.query("""
         select * from keterangan_nonpots
         where (idnumber, last_update_ket) in (
@@ -122,7 +124,7 @@ def get_database_detail_pelanggan():
 
     df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
     df_database = df_database.merge(df_keterangan, on="idnumber", how="left")
-    
+
     return df_database
 
 
@@ -130,15 +132,15 @@ def get_database_cr_cyc(segmen):
     """Fetch semua data CR dan CYC untuk CR CYC Performance"""
     df_cr = conn.query(
         "select * from mybrains_cr where tanggal = (select MAX(tanggal) from mybrains_cr)",
-        params={"ubis": segmen}
+        params={"ubis": segmen},
     )
     df_target_cr = conn.query("select * from target_cr", params={"ubis": segmen})
     df_cyc = conn.query(
         "select * from mybrains_cyc where tanggal = (select MAX(tanggal) from mybrains_cyc)",
-        params={"ubis": segmen}
+        params={"ubis": segmen},
     )
     df_target_cyc = conn.query("select * from target_cyc", params={"ubis": segmen})
-    
+
     return df_cr, df_target_cr, df_cyc, df_target_cyc
 
 
