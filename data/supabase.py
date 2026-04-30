@@ -1,23 +1,27 @@
-import streamlit as st
+from typing import List, Dict, Any, Tuple, Optional
 
-from core.schema import SEGMEN_ONLY
+import pandas as pd
+import streamlit as st
 
 conn = st.connection("supabase")
 
 
 @st.cache_data(ttl=60)
-def fetch_data(query, where_clause=None, params=None):
+def fetch_data(query: str, where_clause: Optional[str] = None, params: Optional[dict] = None) -> pd.DataFrame:
+    """Internal helper to fetch data from Supabase with caching."""
     final_query = query + (where_clause or "")
     return conn.query(final_query, params=params or {})
 
 
-# queries/builder.py
-def build_where_clause(filters: dict, base_conditions=None):
+def build_where_clause(filters: dict, base_conditions: Optional[List[str]] = None) -> Tuple[str, Dict[str, Any]]:
+    """
+    Build a SQL WHERE clause and parameters from filters and base conditions.
+    """
     conditions = list(base_conditions or [])
     params = {}
 
     for key, value in filters.items():
-        if value is not None:
+        if value is not None and value != "-Semua-":
             conditions.append(f"{key} = :{key}")
             params[key] = value
 
@@ -28,7 +32,8 @@ def build_where_clause(filters: dict, base_conditions=None):
     return where_clause, params
 
 
-def get_metric_tanggal():
+def get_metric_tanggal() -> List[str]:
+    """Get the reference dates for metrics (latest 2 and day 5/6 of month)."""
     query = """
     WITH latest_dates AS (
         SELECT DISTINCT tanggal
@@ -54,7 +59,8 @@ def get_metric_tanggal():
     return df["tanggal"].tolist()
 
 
-def get_metric_saldo(filters: dict):
+def get_metric_saldo(filters: dict) -> pd.DataFrame:
+    """Fetch metric data (saldo and count) for specific reference dates."""
     list_tanggal = get_metric_tanggal()
 
     filters = filters.copy()
@@ -63,7 +69,7 @@ def get_metric_saldo(filters: dict):
     conditions = ["saldo_akhir > 0"]
     where_clause, params = build_where_clause(filters, conditions)
 
-    # dynamic IN
+    # dynamic IN clause for dates
     placeholders = []
     for i, tgl in enumerate(list_tanggal):
         key = f"tgl_{i}"
@@ -71,10 +77,7 @@ def get_metric_saldo(filters: dict):
         params[key] = tgl
 
     tanggal_clause = f"tanggal IN ({','.join(placeholders)})"
-
-    where_clause += (
-        f" AND {tanggal_clause}" if where_clause else f" WHERE {tanggal_clause}"
-    )
+    where_clause += (f" AND {tanggal_clause}" if "WHERE" in where_clause else f" WHERE {tanggal_clause}")
 
     query = """
         SELECT 
@@ -85,42 +88,35 @@ def get_metric_saldo(filters: dict):
     """
 
     query = query + where_clause + " GROUP BY tanggal ORDER BY tanggal DESC"
-
-    df = fetch_data(query, params=params)
-
-    return df
+    return fetch_data(query, params=params)
 
 
-def get_data_nonpots(filters: dict):
+def get_data_nonpots(filters: dict) -> pd.DataFrame:
+    """Fetch all non-pots data for the latest date."""
     conditions = [
         "saldo_akhir > 0",
         "tanggal = (SELECT MAX(tanggal) FROM mybrains_nonpots)",
     ]
-    where_clause, params = build_where_clause(
-        filters,
-        conditions,
-    )
-    query = """
-        SELECT *
-        FROM mybrains_nonpots
-    """
+    where_clause, params = build_where_clause(filters, conditions)
+    query = "SELECT * FROM mybrains_nonpots"
     return fetch_data(query, where_clause, params)
 
 
-def get_database_detail_pelanggan():
-    """Fetch and merge database untuk Detail Pelanggan"""
+def get_database_detail_pelanggan() -> pd.DataFrame:
+    """Fetch and merge database for Detail Pelanggan view."""
     df_mybrains = conn.query("select * from mybrains_nonpots where saldo_akhir > 0")
-    df_pelanggan = conn.query(
-        "select idnumber, nama_akun, nama_am from pelanggan_nonpots"
-    )
-    df_keterangan = conn.query("""
+    df_pelanggan = conn.query("select idnumber, nama_akun, nama_am from pelanggan_nonpots")
+    
+    # Get only the latest keterangan for each idnumber
+    latest_keterangan_query = """
         select * from keterangan_nonpots
         where (idnumber, last_update_ket) in (
             select idnumber, MAX(last_update_ket) 
             from keterangan_nonpots 
             group by idnumber
         )
-    """)
+    """
+    df_keterangan = conn.query(latest_keterangan_query)
 
     df_database = df_mybrains.merge(df_pelanggan, on="idnumber", how="left")
     df_database = df_database.merge(df_keterangan, on="idnumber", how="left")
@@ -128,8 +124,9 @@ def get_database_detail_pelanggan():
     return df_database
 
 
-def get_database_cr_cyc(segmen):
-    """Fetch semua data CR dan CYC untuk CR CYC Performance"""
+def get_database_cr_cyc(segmen: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Fetch all CR and CYC data for Performance view."""
+    # Note: query builder could be used here too if filters are complex
     df_cr = conn.query(
         "select * from mybrains_cr where tanggal = (select MAX(tanggal) from mybrains_cr)",
         params={"ubis": segmen},
@@ -144,7 +141,8 @@ def get_database_cr_cyc(segmen):
     return df_cr, df_target_cr, df_cyc, df_target_cyc
 
 
-def get_chart_data_nonpots(filters: dict):
+def get_chart_data_nonpots(filters: dict) -> pd.DataFrame:
+    """Fetch aggregated daily/period data for charts."""
     conditions = ["saldo_akhir > 0"]
     where_clause, params = build_where_clause(filters, conditions)
     query = """

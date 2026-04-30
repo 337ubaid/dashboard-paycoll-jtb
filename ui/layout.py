@@ -3,6 +3,8 @@ from zoneinfo import ZoneInfo
 
 import streamlit as st
 
+from ui.pie import plot_pie_utip
+from ui.pivot import pivot_am_keterangan
 from utils.formatter import format_currency, format_headers
 
 PAGES = [
@@ -26,45 +28,42 @@ PAGES = [
         "label": "Batas Kuadran",
         "icon": ":material/dataset:",
     },
-    {
-        "page": "pages/utip.py",
-        "label": "UTIP",
-        "icon": ":material/money_bag:",
-    },
+    # {
+    #     "page": "pages/utip.py",
+    #     "label": "UTIP",
+    #     "icon": ":material/money_bag:",
+    # },
     {
         "page": "pages/cr_cyc.py",
         "label": "CR CYC",
         "icon": ":material/monitoring:",
     },
-    # {
-    #     "page": "pages/supabase.py",
-    #     "label": "Supabase",
-    #     "icon": ":material/monitoring:",
-    # },
 ]
 
 
-def setup_page(title, icon):
-    _setup_config()
+def setup_page(title: str, icon: str):
+    """Setup page configuration, title, and sidebar."""
+    _setup_config(title, icon)
     _render_title(title, icon)
     _render_sidebar()
 
 
-def _setup_config():
+def _setup_config(title: str, icon: str):
+    """Internal helper to set Streamlit page config."""
     st.set_page_config(
-        page_title="Dashboard Data Collection Jatim Barat",
+        page_title=title,
         layout="wide",
-        page_icon="📈",
+        page_icon=icon,
     )
 
 
-def _render_title(title, icon):
+def _render_title(title: str, icon: str):
+    """Render the main title of the page."""
     st.title(f"{icon} {title}")
 
 
 def _render_sidebar():
     """Render sidebar with navigation menu and sync button."""
-
     with st.sidebar:
         st.title("Menu")
 
@@ -89,7 +88,7 @@ def _render_sync_section():
         st.caption(f"🕐 Terakhir sync: {st.session_state.last_sync}")
 
     # Sync button
-    if st.button("🔄 Sync", type="secondary", use_container_width=True):
+    if st.button("🔄 Sync", type="secondary", width="stretch"):
         st.cache_data.clear()
         st.cache_resource.clear()
         st.session_state.last_sync = datetime.now(ZoneInfo("Asia/Jakarta")).strftime(
@@ -101,52 +100,20 @@ def _render_sync_section():
 
 def print_sort_dataframe(df):
     """Sort dataframe by saldo_akhir (descending) and display."""
-
-    df = df.sort_values("saldo_akhir", ascending=False)
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-    render_dataframe(df)
-    # render_editable_keterangan(df)
+    df_sorted = df.sort_values("saldo_akhir", ascending=False).reset_index(drop=True)
+    df_sorted.index = df_sorted.index + 1
+    render_dataframe(df_sorted)
 
 
 def render_dataframe(df):
     """Display dataframe with formatted headers and currency columns."""
-
     header_map = format_headers(df)
-    df = format_currency(df)
-    st.dataframe(df, column_config=header_map)
-
-
-def render_editable_keterangan(df, key_suffix=""):
-    """Display dataframe with only 'keterangan' column editable."""
-
-    df = df.sort_values("saldo_akhir", ascending=False)
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
-    header_map = format_headers(df)
-    df = format_currency(df)
-
-    # column_config = header_map.copy()
-    # for col in df.columns:
-    #     if col != "keterangan":
-    #         column_config[col].disabled = True
-
-    edited_df = st.data_editor(
-        df,
-        # column_config=column_config,
-        key=f"editor_keterangan_{key_suffix}",
-        width="stretch",
-    )
-
-    return edited_df
-
-
-from ui.pie import plot_pie_utip
-from ui.pivot import pivot_am_keterangan
+    df_styled = format_currency(df)
+    st.dataframe(df_styled, column_config=header_map)
 
 
 def summary_data_utip(df_db_utip, value_type):
+    """Render summary charts and tables for UTIP data."""
     fig = plot_pie_utip(df_db_utip, "KET 2", value_type)
     pivot = pivot_am_keterangan(df_db_utip, value_type)
 

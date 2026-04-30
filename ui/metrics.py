@@ -3,92 +3,57 @@ import streamlit as st
 from services.metrics_service import (
     calculate_dashboard_metrics,
     calculate_dashboard_metrics_supabase,
+    DashboardMetrics,
 )
 
 
 def render_dashboard_metrics(df, segmen="-Semua-"):
-    st.subheader("Metric Saldo")
-
-    df, saldo, pelanggan, different_days, latest_date = calculate_dashboard_metrics(
-        df, segmen
-    )
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        st.metric(
-            "Saldo Awal Bulan Ini",
-            f"{saldo['start_periode']:,.0f}",
-            f"{saldo['delta_start_periode']:,.0f}",
-            delta_color="inverse",
-        )
-
-        st.metric(
-            f"Saldo Hari Ini (dibanding {different_days} hari lalu)",
-            f"{saldo['today']:,.0f}",
-            f"{saldo['delta_yesterday']:,.0f}",
-            delta_color="inverse",
-        )
-
-    with col2:
-
-        st.metric(
-            "Pelanggan Awal Bulan Ini",
-            f"{pelanggan['start_periode']:,.0f}",
-            f"{pelanggan['delta_start_periode']:,.0f}",
-            delta_color="inverse",
-        )
-
-        st.metric(
-            f"Pelanggan Hari Ini (dibanding  {different_days} hari lalu)",
-            f"{pelanggan['today']:,.0f}",
-            f"{pelanggan['delta_yesterday']:,.0f}",
-            delta_color="inverse",
-        )
-
-    st.info(f"Terakhir diperbarui **{latest_date}**")
+    """Render dashboard metrics from raw dataframe."""
+    _, metrics = calculate_dashboard_metrics(df, segmen)
+    _render_metrics_ui(metrics)
 
 
 def render_dashboard_metrics_supabase(data_metric):
-    st.subheader("Metric Saldo")
+    """Render dashboard metrics from Supabase summary data."""
+    metrics = calculate_dashboard_metrics_supabase(data_metric)
+    _render_metrics_ui(metrics)
 
-    saldo, pelanggan, different_days, latest_date = (
-        calculate_dashboard_metrics_supabase(data_metric)
-    )
+
+def _render_metrics_ui(metrics: DashboardMetrics):
+    """Unified UI rendering for dashboard metrics."""
+    st.subheader("Metric Saldo")
 
     col1, col2 = st.columns(2)
 
     with col1:
-
         st.metric(
             "Saldo Awal Bulan Ini",
-            f"{saldo['start_periode']:,.0f}",
-            f"{saldo['delta_start_periode']:,.0f}",
+            f"{metrics.saldo.start_periode:,.0f}",
+            f"{metrics.saldo.delta_start_periode:,.0f}",
             delta_color="inverse",
         )
 
         st.metric(
-            f"Saldo Hari Ini (dibanding {different_days} hari lalu)",
-            f"{saldo['today']:,.0f}",
-            f"{saldo['delta_yesterday']:,.0f}",
+            f"Saldo Hari Ini (dibanding {metrics.different_days} hari lalu)",
+            f"{metrics.saldo.today:,.0f}",
+            f"{metrics.saldo.delta_yesterday:,.0f}",
             delta_color="inverse",
         )
 
     with col2:
-
         st.metric(
             "Pelanggan Awal Bulan Ini",
-            f"{pelanggan['start_periode']:,.0f}",
-            f"{pelanggan['delta_start_periode']:,.0f}",
+            f"{metrics.pelanggan.start_periode:,.0f}",
+            f"{metrics.pelanggan.delta_start_periode:,.0f}",
             delta_color="inverse",
         )
 
         st.metric(
-            f"Pelanggan Hari Ini (dibanding  {different_days} hari lalu)",
-            f"{pelanggan['today']:,.0f}",
-            f"{pelanggan['delta_yesterday']:,.0f}",
+            f"Pelanggan Hari Ini (dibanding {metrics.different_days} hari lalu)",
+            f"{metrics.pelanggan.today:,.0f}",
+            f"{metrics.pelanggan.delta_yesterday:,.0f}",
             delta_color="inverse",
         )
 
-    st.info(f"Terakhir diperbarui **{latest_date}**")
+    if metrics.latest_date:
+        st.info(f"Terakhir diperbarui **{metrics.latest_date}**")

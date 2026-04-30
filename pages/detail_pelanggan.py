@@ -12,40 +12,52 @@ from ui.metrics import render_dashboard_metrics
 from utils.selector import cari_am, input_am, pilih_all_segmen
 
 
-def update_keterangan(df, key_suffix):
-    df_edit_keterangan = st.data_editor(
+def render_editable_keterangan(df, key_suffix):
+    """
+    Render an editable data editor for the 'keterangan' column 
+    and show changes.
+    """
+    st.info(f"{len(df)} Pelanggan")
+    
+    # Configure editable columns
+    df_edited = st.data_editor(
         df,
-        disabled=df.drop(columns=["keterangan"]),
+        disabled=[col for col in df.columns if col != "keterangan"],
         key=f"editor_ket_{key_suffix}",
+        width="stretch"
     )
 
-    df = df.fillna("")
-    df_edit_keterangan = df_edit_keterangan.fillna("")
+    # Detect changes
+    df_original = df.fillna("")
+    df_current = df_edited.fillna("")
 
-    df_ket = df.set_index("idnumber")["keterangan"]
-    df_edit_keterangan_ket = df_edit_keterangan.set_index("idnumber")["keterangan"]
+    # Compare by idnumber
+    original_ket = df_original.set_index("idnumber")["keterangan"]
+    current_ket = df_current.set_index("idnumber")["keterangan"]
+    
+    changed_ids = original_ket.ne(current_ket)
+    
+    if changed_ids.any():
+        changes = df_current[df_current["idnumber"].isin(changed_ids[changed_ids].index)]
+        st.subheader("Perubahan Tersimpan (Preview)")
+        st.write(changes[["idnumber", "nama_akun", "nama_am", "keterangan"]])
 
-    changed_ids = df_ket.ne(df_edit_keterangan_ket)  # not equal
 
-    result = df_edit_keterangan[
-        df_edit_keterangan["idnumber"].isin(changed_ids[changed_ids].index)
-    ]
-    result = result[["idnumber", "nama_akun", "nama_am", "keterangan"]]
-
-    st.write(result)
-
-
+# --- Data Initialization ---
 df_database = get_database_detail_pelanggan()
 latest_date = df_database["tanggal"].max()
 
+# --- Page Config ---
 setup_page("Detail Pelanggan", "❇️")
 
+# --- Filters ---
 c1, c2, _ = st.columns(3)
 with c1:
     segmen_target = pilih_all_segmen()
 with c2:
     nama_am = input_am()
 
+# Filter by AM Name
 filtered_df = cari_am(df_database, nama_am)
 
 if filtered_df.empty:
@@ -53,46 +65,44 @@ if filtered_df.empty:
     st.error(f"{am_display.upper()} tidak ditemukan.")
     st.stop()
 
+# --- Section: Summary ---
 st.header("📌 Summary")
-c1, c2 = st.columns(2)
-with c1:
+col_m, col_c = st.columns(2)
+with col_m:
     render_dashboard_metrics(filtered_df, segmen_target)
-with c2:
+with col_c:
     print_chart_tren_saldo(filtered_df, segmen_target)
 
+# --- Section: Kuadran ---
 st.header(
     "📌 Kuadran",
     help="Pengelompokkan prioritas pelanggan berdasarkan besar **Nilai Pinjaman** dan **Lama Tunggakan**",
 )
-tab_kuadran, tab_details = st.tabs(["Kuadran", "Detail"])
-filtered_df = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
 
-with tab_kuadran:
+tab_overview, tab_details = st.tabs(["Ringkasan", "Detail"])
+
+# Filter for the latest date for Kuadran analysis
+df_latest = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
+
+with tab_overview:
     df_kuadran, total_pelanggan, total_saldo = prepare_kuadran_data(
-        filtered_df, segmen_target, COLUMNS_KUADRAN
+        df_latest, segmen_target, COLUMNS_KUADRAN
     )
-
     render_all_kuadran(df_kuadran, total_pelanggan, total_saldo)
+
 with tab_details:
-    st.subheader("Detail Kuadran")
-    tab_names = ["ALL", "Kuadran 1", "Kuadran 2", "Kuadran 3", "Kuadran 4"]
-    tabs = st.tabs(tab_names)
+    st.subheader("Detail Tiap Kuadran")
+    tab_labels = ["SEMUA", "Kuadran 1", "Kuadran 2", "Kuadran 3", "Kuadran 4"]
+    sub_tabs = st.tabs(tab_labels)
 
-    for i, tab in enumerate(tabs):
+    for i, tab in enumerate(sub_tabs):
         with tab:
-            if i == 0:
-                df_show = filtered_df
-            else:
-                df_show = filtered_df[filtered_df["kuadran"] == i]
-            st.info(f"{len(df_show)} Pelanggan")
-            update_keterangan(df_show, key_suffix=i)
+            df_target = df_latest if i == 0 else df_latest[df_latest["kuadran"] == i]
+            render_editable_keterangan(df_target, key_suffix=i)
 
-
+# --- Section: UTIP ---
 st.divider()
-st.header(
-    "📌 UTIP",
-    help="Uang Titipan",
-)
+st.header("📌 UTIP (Uang Titipan)")
 df_db_utip = load_database_utip()
 filtered_df_utip = cari_am(df_db_utip, nama_am)
-st.dataframe(filtered_df_utip)
+st.dataframe(filtered_df_utip, width="stretch")

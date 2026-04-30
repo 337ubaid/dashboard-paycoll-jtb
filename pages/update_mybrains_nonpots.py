@@ -6,7 +6,7 @@ from ui.dialog import confirm_dialog, upsert_rows_mybrains
 from ui.layout import print_sort_dataframe, setup_page
 from utils.dataframe_utils import convert_excel_mybrains_nonpots, create_empty_df
 from utils.selector import pilih_segmen
-from utils.validator import format_currency
+from utils.formatter import format_currency
 
 # ====== Konfigurasi PAge ======
 setup_page("Update MyBrains NonPots", "🧠")

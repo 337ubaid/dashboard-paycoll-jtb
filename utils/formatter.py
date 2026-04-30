@@ -1,3 +1,4 @@
+import streamlit as st
 from core.schema import ALL_SCHEMAS
 
 
@@ -9,9 +10,6 @@ def format_headers(df):
 def format_currency(df):
     cols = get_currency_columns(df)
     return df.style.format({c: "{:,.0f}" for c in cols})
-
-
-import streamlit as st
 
 
 def get_currency_columns(df):

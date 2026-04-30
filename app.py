@@ -1,7 +1,7 @@
 import streamlit as st
 
 from data.supabase import get_data_nonpots, get_metric_saldo
-from ui.chart import print_chart_tren_saldo_supabaase
+from ui.chart import print_chart_tren_saldo_supabase
 from ui.layout import print_sort_dataframe, setup_page
 from ui.metrics import render_dashboard_metrics_supabase
 from utils.selector import pilih_all_segmen
@@ -25,7 +25,7 @@ with c1:
     render_dashboard_metrics_supabase(data_metric)
 with c2:
     # Grafik
-    print_chart_tren_saldo_supabaase(filters)
+    print_chart_tren_saldo_supabase(filters)
 
 # SHOW ALL DATA
 df_nonpots = get_data_nonpots(filters)
