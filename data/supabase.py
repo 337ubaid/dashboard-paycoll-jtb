@@ -140,3 +140,14 @@ def get_database_cr_cyc(segmen):
     df_target_cyc = conn.query("select * from target_cyc", params={"ubis": segmen})
     
     return df_cr, df_target_cr, df_cyc, df_target_cyc
+
+
+def get_chart_data_nonpots(filters: dict):
+    conditions = ["saldo_akhir > 0"]
+    where_clause, params = build_where_clause(filters, conditions)
+    query = """
+        SELECT tanggal, billperiode, SUM(saldo_akhir) as saldo_akhir
+        FROM mybrains_nonpots
+    """
+    query += where_clause + " GROUP BY tanggal, billperiode ORDER BY tanggal ASC"
+    return fetch_data(query, params=params)
