@@ -61,66 +61,66 @@ st.divider()
 
 
 ############################################################## UTIP
-st.header("UTIP")
-data_utip = {
-    "Periode UTIP": [
-        "Corrective cut off Juni 2025",
-        "Progressive Juli 2025",
-        "Progressive Agustus 2025",
-        "Progressive September 2025",
-        "Progressive Oktober 2025",
-        "Progressive November 2025",
-        "Progressive Desember 2025",
-        "Progressive Januari 2026",
-        "Progressive Februari 2026",
-        "Progressive Maret 2026",
-        "GRAND TOTAL",
-    ],
-    "Total Saldo": [
-        15000000,
-        12000000,
-        18000000,
-        11000000,
-        13000000,
-        14000000,
-        12500000,
-        16000000,
-        15500000,
-        17000000,
-        144000000,
-    ],
-}
-df_utip = pd.DataFrame(data_utip)
+# st.header("UTIP")
+# data_utip = {
+#     "Periode UTIP": [
+#         "Corrective cut off Juni 2025",
+#         "Progressive Juli 2025",
+#         "Progressive Agustus 2025",
+#         "Progressive September 2025",
+#         "Progressive Oktober 2025",
+#         "Progressive November 2025",
+#         "Progressive Desember 2025",
+#         "Progressive Januari 2026",
+#         "Progressive Februari 2026",
+#         "Progressive Maret 2026",
+#         "GRAND TOTAL",
+#     ],
+#     "Total Saldo": [
+#         15000000,
+#         12000000,
+#         18000000,
+#         11000000,
+#         13000000,
+#         14000000,
+#         12500000,
+#         16000000,
+#         15500000,
+#         17000000,
+#         144000000,
+#     ],
+# }
+# df_utip = pd.DataFrame(data_utip)
 
-st.dataframe(df_utip)
+# st.dataframe(df_utip)
 
-st.divider()
-#
+# st.divider()
+# #
 
 
-"""
-1. load database
-2. filter tanggal from  17 
-3. count cr
-4. display target
-5. count prognosa
-6. display customer from highest saldo akhir
+# """
+# 1. load database
+# 2. filter tanggal from  17 
+# 3. count cr
+# 4. display target
+# 5. count prognosa
+# 6. display customer from highest saldo akhir
 
-"""
+# """
 
-df_nonpots = load_database_nonpots()
-# df_nonpots = filter_column(df_nonpots, "2026-04-17")
-df_nonpots["tanggal"] = pd.to_datetime(df_nonpots["tanggal"])
+# df_nonpots = load_database_nonpots()
+# # df_nonpots = filter_column(df_nonpots, "2026-04-17")
+# df_nonpots["tanggal"] = pd.to_datetime(df_nonpots["tanggal"])
 
-df_nonpots = df_nonpots[df_nonpots["tanggal"] >= "2026-04-20"]
-df_nonpots = df_nonpots[df_nonpots["saldo_akhir"] > 0]
+# df_nonpots = df_nonpots[df_nonpots["tanggal"] >= "2026-04-20"]
+# df_nonpots = df_nonpots[df_nonpots["saldo_akhir"] > 0]
 
-st.dataframe(df_nonpots.dtypes)
+# st.dataframe(df_nonpots.dtypes)
 
-pivot_cr = df_nonpots.pivot_table(
-    index=["segmen"],
-    values=["saldo_akhir", "Cash", "Total Billing", "Bill BJT", "Cash BJT"],
-    aggfunc="sum",
-)
+# pivot_cr = df_nonpots.pivot_table(
+#     index=["segmen"],
+#     values=["saldo_akhir", "Cash", "Total Billing", "Bill BJT", "Cash BJT"],
+#     aggfunc="sum",
+# )
 
-st.dataframe(pivot_cr)
+# st.dataframe(pivot_cr)
