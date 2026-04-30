@@ -6,14 +6,18 @@ from services.chart import (
     plot_chart,
     prepare_forecast_nonpots,
 )
-from services.filters import filter_collection_data
+
+from data.supabase import get_chart_data_nonpots
 
 
-def print_chart_tren_saldo(df_nonpots, segmen_target):
+def print_chart_tren_saldo(filters):
     st.subheader("Tren Saldo")
 
+    # Fetch data
+    df_filtered = get_chart_data_nonpots(filters)
+
     # Billperiode selector
-    available_bps = get_available_billperiodes(df_nonpots)
+    available_bps = get_available_billperiodes(df_filtered)
 
     # Format billperiodes for display
     bp_options = ["Semua Periode"] + [
@@ -29,9 +33,6 @@ def print_chart_tren_saldo(df_nonpots, segmen_target):
     else:
         bp_parts = selected_bp_display.split("-")
         selected_billperiode = int(bp_parts[0]) * 100 + int(bp_parts[1])
-
-    # Filter for chart
-    df_filtered = filter_collection_data(df_nonpots, segmen_target)
 
     # Prepare chart data
     df_chart = prepare_forecast_nonpots(df_filtered, billperiode=selected_billperiode)

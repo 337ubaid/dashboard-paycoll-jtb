@@ -142,7 +142,7 @@ def prepare_forecast_nonpots(df, billperiode=None, value_col="saldo_akhir"):
 
         # Convert tanggal to datetime for daily aggregation
         df_filtered["tanggal_dt"] = pd.to_datetime(
-            df_filtered["tanggal"], format="%d/%m/%Y", errors="coerce"
+            df_filtered["tanggal"], errors="coerce"
         )
 
         # Aggregate by day within the billperiode

@@ -38,18 +38,34 @@ def calculate_dashboard_metrics(df, segmen):
 
 def calculate_dashboard_metrics_supabase(df):
 
-    start_periode = df.iloc[2]["tanggal"]
-    yesterday = df.iloc[1]["tanggal"]
+    if len(df) == 0:
+        return (
+            {"today": 0, "delta_yesterday": 0, "delta_start_periode": 0, "start_periode": 0},
+            {"today": 0, "delta_yesterday": 0, "delta_start_periode": 0, "start_periode": 0},
+            0,
+            None,
+        )
+
     latest_date = df.iloc[0]["tanggal"]
-    different_days = (latest_date - yesterday).days
-
     nominal_today = df.iloc[0]["total_saldo"]
-    nominal_yesterday = df.iloc[1]["total_saldo"]
-    nominal_start_periode = df.iloc[2]["total_saldo"]
-
     pelanggan_today = df.iloc[0]["total_pelanggan"]
-    pelanggan_yesterday = df.iloc[1]["total_pelanggan"]
-    pelanggan_start_periode = df.iloc[2]["total_pelanggan"]
+
+    if len(df) > 1:
+        yesterday = df.iloc[1]["tanggal"]
+        different_days = (latest_date - yesterday).days
+        nominal_yesterday = df.iloc[1]["total_saldo"]
+        pelanggan_yesterday = df.iloc[1]["total_pelanggan"]
+    else:
+        different_days = 0
+        nominal_yesterday = nominal_today
+        pelanggan_yesterday = pelanggan_today
+
+    if len(df) > 2:
+        nominal_start_periode = df.iloc[2]["total_saldo"]
+        pelanggan_start_periode = df.iloc[2]["total_pelanggan"]
+    else:
+        nominal_start_periode = nominal_yesterday
+        pelanggan_start_periode = pelanggan_yesterday
 
     return (
         {
