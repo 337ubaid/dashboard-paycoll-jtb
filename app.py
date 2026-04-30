@@ -30,5 +30,3 @@ with c2:
 # SHOW ALL DATA
 df_nonpots = get_data_nonpots(filters)
 print_sort_dataframe(df_nonpots)
-
-st.write("---")
