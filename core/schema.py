@@ -6,6 +6,13 @@ REQUIRED_COLUMNS_MYBRAINS = {
     "7-12_bln": "currency",
     "13-24_bln": "currency",
     ">_24_bln": "currency",
+    "total_billing": "currency",
+    "total_collection": "currency",
+    "cash": "currency",
+    "non_cash": "currency",
+    "bill_bjt": "currency",
+    "coll_bjt": "currency",
+    "cash_bjt": "currency",
 }
 
 SCHEMA_DATABASE_PELANGGAN = {
