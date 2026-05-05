@@ -15,8 +15,8 @@ def pilih_all_segmen(key="segmen"):
 
 
 def pilih_segmen(key="segmen"):
-
-    return st.selectbox("Pilih Segmen", SEGMEN_ONLY, key=key)
+    """Select segment with -Semua- option."""
+    return st.selectbox("Pilih Segmen", SEGMEN, key=key)
 
 
 def cari_am(df, nama_am):

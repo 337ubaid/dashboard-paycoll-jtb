@@ -1,9 +1,19 @@
 from typing import List, Dict, Any, Tuple, Optional
+from datetime import datetime
 
 import pandas as pd
 import streamlit as st
+from supabase import create_client, Client
 
 conn = st.connection("supabase")
+
+
+@st.cache_resource
+def get_supabase_client() -> Client:
+    """Initialize and cache Supabase client for direct operations."""
+    supabase_url = st.secrets["SUPABASE_URL"]
+    supabase_key = st.secrets["SUPABASE_KEY"]
+    return create_client(supabase_url, supabase_key)
 
 
 @st.cache_data(ttl=60)
@@ -151,3 +161,102 @@ def get_chart_data_nonpots(filters: dict) -> pd.DataFrame:
     """
     query += where_clause + " GROUP BY tanggal, billperiode ORDER BY tanggal ASC"
     return fetch_data(query, params=params)
+
+
+# ==================== SUPABASE WRITE OPERATIONS ====================
+
+COLUMN_MAPPING_SUPABASE = {
+    "idnumber": "idnumber",
+    "segmen": "segmen",
+    "saldo_akhir": "saldo_akhir",
+    "0-3_bln": "0-3_bln",
+    "4-6_bln": "4-6_bln",
+    "7-12_bln": "7-12_bln",
+    "13-24_bln": "13-24_bln",
+    ">_24_bln": ">_24_bln",
+    "total_billing": "Total Billing",
+    "total_collection": "Total Collection",
+    "cash": "Cash",
+    "non_cash": "Non Cash",
+    "bill_bjt": "Bill BJT",
+    "coll_bjt": "Coll BJT",
+    "cash_bjt": "Cash BJT",
+    "tanggal": "tanggal",
+    "lama_tunggakan": "lama_tunggakan",
+    "kuadran": "kuadran",
+    "billperiode": "billperiode",
+}
+
+
+def _convert_currency_to_bigint(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert currency columns to bigint format."""
+    currency_cols = [
+        "saldo_akhir", "0-3_bln", "4-6_bln", "7-12_bln", "13-24_bln", ">_24_bln",
+        "total_billing", "total_collection", "cash", "non_cash", "bill_bjt", "coll_bjt", "cash_bjt"
+    ]
+    for col in currency_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(
+                df[col].astype(str).str.replace(".", "", regex=False),
+                errors="coerce"
+            ).fillna(0).astype("int64")
+    return df
+
+
+def _convert_date_format(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert tanggal from DD/MM/YYYY to YYYY-MM-DD."""
+    if "tanggal" in df.columns:
+        df["tanggal"] = pd.to_datetime(df["tanggal"], format="%d/%m/%Y", errors="coerce").dt.strftime("%Y-%m-%d")
+    return df
+
+
+def convert_dataframe_to_supabase_format(df: pd.DataFrame) -> List[Dict[str, Any]]:
+    """
+    Convert DataFrame to Supabase format with proper column names and data types.
+    
+    Args:
+        df: DataFrame dengan columns dalam snake_case
+        
+    Returns:
+        List of dictionaries ready for Supabase upsert
+    """
+    df_copy = df.copy()
+    df_copy = _convert_currency_to_bigint(df_copy)
+    df_copy = _convert_date_format(df_copy)
+    
+    # Rename dan select columns sesuai mapping
+    df_copy = df_copy.rename(columns=COLUMN_MAPPING_SUPABASE)
+    columns_to_keep = [COLUMN_MAPPING_SUPABASE[col] for col in df.columns if col in COLUMN_MAPPING_SUPABASE]
+    
+    return df_copy[columns_to_keep].to_dict(orient="records")
+
+
+def upsert_mybrains_nonpots_supabase(df: pd.DataFrame, segmen: str, tanggal: str) -> Dict[str, Any]:
+    """
+    Upsert data ke tabel mybrains_nonpots_2 di Supabase.
+    Menghapus data lama untuk segmen dan tanggal yang sama sebelum insert.
+    
+    Args:
+        df: DataFrame dengan data yang akan diupload
+        segmen: Segmen pelanggan atau \"-Semua-\"
+        tanggal: Tanggal bill periode (format DD/MM/YYYY)
+        
+    Returns:
+        Dict dengan keys: success (bool), upserted (int), error (str/None)
+    """
+    try:
+        records = convert_dataframe_to_supabase_format(df)
+        if not records:
+            return {"success": False, "error": "Data kosong setelah konversi", "upserted": 0}
+        
+        supabase = get_supabase_client()
+        tanggal_formatted = datetime.strptime(tanggal, "%d/%m/%Y").strftime("%Y-%m-%d")
+        
+        # Delete old records & upsert new ones
+        supabase.table("mybrains_nonpots_2").delete().eq("segmen", segmen).eq("tanggal", tanggal_formatted).execute()
+        supabase.table("mybrains_nonpots_2").upsert(records).execute()
+        
+        return {"success": True, "upserted": len(records), "error": None}
+        
+    except Exception as e:
+        return {"success": False, "error": str(e), "upserted": 0}

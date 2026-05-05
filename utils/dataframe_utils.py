@@ -25,13 +25,27 @@ def reset_index(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _extract_segmen_from_subsegment(df: pd.DataFrame) -> pd.DataFrame:
+    """Extract first 3 characters from sub_segment column to create segmen."""
+    df = df.copy()
+    for col in df.columns:
+        if col.startswith("sub") and ("segment" in col or "segmen" in col):
+            df["segmen"] = df[col].astype(str).str[:3]
+            break
+    return df
+
+
 def convert_excel_mybrains_nonpots(file, segmen_target, tanggal):
     """Pipeline to convert and enrich MyBrains Excel data."""
     df = load_mybrains_excel(file)
     df = normalize_columns_name(df)
-    df = df.reindex(columns=REQUIRED_COLUMNS_MYBRAINS.keys()).copy()
+    df = _extract_segmen_from_subsegment(df)
+    
+    # Keep required columns + segmen
+    required_cols = list(REQUIRED_COLUMNS_MYBRAINS.keys()) + ["segmen"]
+    df = df.reindex(columns=required_cols).copy()
 
-    # Add metadata and compute business logic fields
+    # Apply transformations
     df = add_metadata(df, segmen_target, tanggal)
     df = compute_lama_tunggakan(df)
     df = assign_kuadran(df)
@@ -47,8 +61,29 @@ def create_empty_df() -> pd.DataFrame:
 
 
 def add_metadata(df: pd.DataFrame, segmen: str, tanggal: str) -> pd.DataFrame:
-    """Add segment and date metadata to dataframe."""
+    """
+    Add date metadata and handle segment filtering.
+    
+    If segmen is "-Semua-", keep all rows with their extracted segment values.
+    Otherwise, filter data to only include rows matching the selected segment.
+    """
     df = df.copy()
-    df["segmen"] = segmen
     df["tanggal"] = tanggal
+    
+    # If -Semua- is selected, preserve all segments from extraction
+    if segmen == "-Semua-":
+        # Keep all data with their extracted segments
+        if "segmen" not in df.columns:
+            raise ValueError(
+                "Kolom 'segmen' tidak ditemukan. "
+                "Pastikan file Excel memiliki kolom 'Sub-segment' atau pilih segmen spesifik."
+            )
+    else:
+        # Filter data to only include matching segment
+        if "segmen" in df.columns:
+            df = df[df["segmen"] == segmen].copy()
+        else:
+            # If no segmen column (edge case), set all to selected segment
+            df["segmen"] = segmen
+    
     return df
