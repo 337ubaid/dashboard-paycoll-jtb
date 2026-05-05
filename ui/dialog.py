@@ -60,9 +60,10 @@ def upsert_rows_mybrains(df_new, worksheet_name, segmen, tanggal):
     # Current: Upload ke Supabase
     with st.spinner("Uploading to Supabase..."):
         result = upsert_mybrains_nonpots_supabase(df_new, segmen, tanggal)
-        time.sleep(30)
     
     if result["success"]:
         st.success(f"✅ {result['upserted']} baris berhasil di-upload ke Supabase")
     else:
         st.error(f"❌ Gagal upload ke Supabase: {result['error']}")
+
+    time.sleep(3)
