@@ -132,20 +132,27 @@ def _prepare_daily_forecast(df: pd.DataFrame, billperiode: int, value_col: str) 
     last_date = df_actual["date"].max()
     last_value = df_actual[value_col].iloc[-1]
 
-    # Determine end of period (day 5 of next month)
+    # Determine end of period (last day of current month)
     year, month = divmod(billperiode, 100)
     if month == 12:
-        end_period = date(year + 1, 1, 5)
+        end_period = date(year, 12, 31)
     else:
-        end_period = date(year, month + 1, 5)
+        end_period = date(year, month + 1, 1) - timedelta(days=1)
 
     future_dates = pd.date_range(last_date + timedelta(days=1), end_period, freq="D")
-    vals = [last_value + (trend * (i + 1)) for i in range(len(future_dates))]
-
-    df_forecast = pd.DataFrame({
-        "date": future_dates,
-        value_col: vals if vals else [last_value]
-    })
+    
+    # Handle case when there are no future dates (data already covers the period)
+    if len(future_dates) == 0:
+        df_forecast = pd.DataFrame({
+            "date": pd.DatetimeIndex([]),
+            value_col: []
+        })
+    else:
+        vals = [last_value + (trend * (i + 1)) for i in range(len(future_dates))]
+        df_forecast = pd.DataFrame({
+            "date": future_dates,
+            value_col: vals
+        })
 
     df_actual["type"] = "actual"
     df_forecast["type"] = "forecast"
