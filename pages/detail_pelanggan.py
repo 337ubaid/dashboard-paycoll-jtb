@@ -60,9 +60,14 @@ with c2:
 # Filter by AM Name
 filtered_df = cari_am(df_database, nama_am)
 
-if filtered_df.empty:
+# Filter for the latest date for Kuadran analysis
+df_latest = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
+
+st.dataframe(df_latest)
+
+if filtered_df.empty or df_latest.empty:
     am_display = nama_am if nama_am.upper().startswith("AM") else f"AM {nama_am}"
-    st.error(f"{am_display.upper()} tidak ditemukan.")
+    st.error(f"{am_display.upper()} tidak ditemukan. Silakan pilih AM lain atau segmen lain.")
     st.stop()
 
 # --- Section: Summary ---
@@ -81,8 +86,6 @@ st.header(
 
 tab_overview, tab_details = st.tabs(["Ringkasan", "Detail"])
 
-# Filter for the latest date for Kuadran analysis
-df_latest = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
 
 with tab_overview:
     df_kuadran, total_pelanggan, total_saldo = prepare_kuadran_data(
