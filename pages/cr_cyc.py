@@ -16,12 +16,13 @@ def render_metric_header(label: str, now: float, target: float, shortage: str, m
     st.header(label)
     col1, col2 = st.columns(2)
     
-    delta = now - target
+    # Calculate achievement percentage against target (100% = on target)
+    achievement = now / target if target > 0 else 0
+    delta_achievement = achievement - 1
     col1.metric(
         label=f"Total {metric_prefix}",
         value=f"{now:.2%}",
-        delta=f"{delta:.2%}",
-        delta_arrow="off"
+        delta=f"{delta_achievement:.2%}"
     )
     col2.metric(label=f"Target {metric_prefix}", value=f"{target:.2%}")
     st.metric("Shortage", shortage)
