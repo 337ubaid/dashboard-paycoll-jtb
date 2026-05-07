@@ -63,8 +63,6 @@ filtered_df = cari_am(df_database, nama_am)
 # Filter for the latest date for Kuadran analysis
 df_latest = filter_collection_data(filtered_df, segmen_target, tanggal=latest_date)
 
-st.dataframe(df_latest)
-
 if filtered_df.empty or df_latest.empty:
     am_display = nama_am if nama_am.upper().startswith("AM") else f"AM {nama_am}"
     st.error(f"{am_display.upper()} tidak ditemukan. Silakan pilih AM lain atau segmen lain.")
