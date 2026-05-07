@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 from core.schema import REQUIRED_COLUMNS_MYBRAINS, SCHEMA_DATABASE_NONPOTS
 from data.excel import load_mybrains_excel
@@ -66,9 +67,19 @@ def add_metadata(df: pd.DataFrame, segmen: str, tanggal: str) -> pd.DataFrame:
     
     If segmen is "-Semua-", keep all rows with their extracted segment values.
     Otherwise, filter data to only include rows matching the selected segment.
+    
+    Also extracts billperiode (YYYYMM format) from tanggal (DD/MM/YYYY format).
     """
     df = df.copy()
     df["tanggal"] = tanggal
+    
+    # Extract billperiode from tanggal (DD/MM/YYYY format → YYYYMM)
+    try:
+        parsed_date = datetime.strptime(tanggal, "%d/%m/%Y")
+        df["billperiode"] = int(parsed_date.strftime("%Y%m"))
+    except Exception:
+        # Fallback if date parsing fails
+        df["billperiode"] = None
     
     # If -Semua- is selected, preserve all segments from extraction
     if segmen == "-Semua-":

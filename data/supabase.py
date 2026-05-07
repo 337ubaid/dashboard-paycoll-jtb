@@ -233,7 +233,7 @@ def convert_dataframe_to_supabase_format(df: pd.DataFrame) -> List[Dict[str, Any
 
 def upsert_mybrains_nonpots_supabase(df: pd.DataFrame, segmen: str, tanggal: str) -> Dict[str, Any]:
     """
-    Upsert data ke tabel mybrains_nonpots_2 di Supabase.
+    Upsert data ke tabel mybrains_nonpots di Supabase.
     Menghapus data lama untuk segmen dan tanggal yang sama sebelum insert.
     
     Args:
@@ -253,8 +253,8 @@ def upsert_mybrains_nonpots_supabase(df: pd.DataFrame, segmen: str, tanggal: str
         tanggal_formatted = datetime.strptime(tanggal, "%d/%m/%Y").strftime("%Y-%m-%d")
         
         # Delete old records & upsert new ones
-        supabase.table("mybrains_nonpots_2").delete().eq("segmen", segmen).eq("tanggal", tanggal_formatted).execute()
-        supabase.table("mybrains_nonpots_2").upsert(records).execute()
+        supabase.table("mybrains_nonpots").delete().eq("segmen", segmen).eq("tanggal", tanggal_formatted).execute()
+        supabase.table("mybrains_nonpots").upsert(records).execute()
         
         return {"success": True, "upserted": len(records), "error": None}
         
