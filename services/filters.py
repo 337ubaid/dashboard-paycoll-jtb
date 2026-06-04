@@ -22,11 +22,8 @@ def filter_collection_data(df, segmen, kuadran=None, tanggal=None):
 
 
 def filter_utip_data(df, segmen):
-    if segmen != "-Semua-":
+    if segmen is not None and segmen != "-Semua-":
         df = df[df["SEGMEN"] == segmen]
-
-    # reset_index(df)
-
     return df
 
 
