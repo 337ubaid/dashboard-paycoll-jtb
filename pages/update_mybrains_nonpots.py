@@ -9,7 +9,7 @@ from utils.selector import pilih_segmen
 from utils.formatter import format_currency
 
 # ====== Konfigurasi PAge ======
-setup_page("Update MyBrains NonPots", "🧠")
+setup_page("Update MyBrains NonPots", "🧠") 
 # ==============================
 
 
