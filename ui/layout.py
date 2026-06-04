@@ -28,11 +28,11 @@ PAGES = [
         "label": "Batas Kuadran",
         "icon": ":material/dataset:",
     },
-    # {
-    #     "page": "pages/utip.py",
-    #     "label": "UTIP",
-    #     "icon": ":material/money_bag:",
-    # },
+    {
+        "page": "pages/utip.py",
+        "label": "UTIP",
+        "icon": ":material/money_bag:",
+    },
     {
         "page": "pages/cr_cyc.py",
         "label": "CR CYC",
@@ -120,7 +120,7 @@ def summary_data_utip(df_db_utip, value_type):
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Distribusi Keterangan UTIP")
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, width="stretch", key=f"pie_utip_{value_type}")
     with col2:
         st.subheader("Tunggakan tiap AM")
         st.dataframe(
