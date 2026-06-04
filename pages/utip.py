@@ -10,7 +10,7 @@ from ui.pie import plot_pie_utip
 from ui.pivot import pivot_am_keterangan, pivot_periode_utip
 from utils.selector import pilih_all_segmen
 
-setup_page("UTIP", "❏️")
+setup_page("UTIP", ":material/money_bag:")
 
 
 df_db_utip = load_database_utip()
